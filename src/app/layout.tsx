@@ -1,9 +1,12 @@
 import "~/styles/globals.css";
 
-// @TODO CHANGE THE METADATA
 export const metadata = {
-  title: "t3-app-dir-supabase",
-  description: "Boilerplate for t3-app-dir-supabase.",
+  title: "Wait is that a sticker?",
+  description:
+    "WITAS allows anyone to generate state-of-the-art stickers using multiple AI models to iterate, upscale, crop and edit images.",
+  openGraph: {
+    images: ["/images/og.png"],
+  },
 };
 
 function RootLayout({ children }: { children: React.ReactNode }) {
