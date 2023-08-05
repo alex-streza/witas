@@ -25,15 +25,8 @@ import { prisma } from "~/server/db";
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
-  const req = _opts.req;
-
-  const { user } = req.headers.authorization
-    ? await getUserAsAdmin(req.headers.authorization)
-    : { user: null };
-
   return {
     prisma,
-    user,
   };
 };
 
@@ -47,7 +40,6 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { getUserAsAdmin } from "../supabase/supabaseClient";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -85,19 +77,3 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
-
-const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.user) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-    });
-  }
-
-  return next({
-    ctx: {
-      user: ctx.user,
-    },
-  });
-});
-
-export const privateProcedure = t.procedure.use(enforceUserIsAuthed);

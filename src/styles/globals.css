@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply relative grid h-screen w-screen place-content-center bg-zinc-900 p-10;
+}

@@ -1,3 +1,5 @@
+import "~/styles/globals.css";
+
 // @TODO CHANGE THE METADATA
 export const metadata = {
   title: "t3-app-dir-supabase",

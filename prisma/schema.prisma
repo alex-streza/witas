@@ -1,12 +1,23 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema", "jsonProtocol"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  schemas   = ["auth", "public"]
 }
 
+enum StickerType {
+  DALL_E_2
+  MIDJOURNEY
+}
+
+model Sticker {
+  id        Int      @id @default(autoincrement())
+  url    String
+  type    String
+  prompt    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
