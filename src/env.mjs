@@ -11,6 +11,8 @@ export const env = createEnv({
     SUPABASE_SERVICE_KEY: z.string().min(1),
     DIRECT_URL: z.string().min(1),
     DATABASE_URL: z.string().min(1),
+    OPENAI_API_KEY: z.string().min(1),
+    REPLICATE_API_TOKEN: z.string().min(1),
   },
 
   /**
@@ -33,6 +35,8 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     DIRECT_URL: process.env.DIRECT_URL,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,
     NEXT_PUBLIC_SELF_HOSTING: process.env.NEXT_PUBLIC_SELF_HOSTING,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,

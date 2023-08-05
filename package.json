@@ -10,7 +10,7 @@
     "start": "next start",
     "update-types-local": "supabase gen types typescript --local > src/server/supabase/supabaseTypes.ts",
     "prepare:local": "yarn update-types-local && yarn prisma db pull && yarn prisma generate && yarn prisma-case-format --file prisma/schema.prisma  && yarn prisma generate",
-    "update-types-remote": "supabase gen types typescript --project-id \"PUT YOUR SUPABASE REMOTE API KEY\" --schema public > src/server/supabaseTypes.ts",
+    "update-types-remote": "supabase gen types typescript --project-id \"eiuckazvagocqjiisium\" --schema public > src/server/supabaseTypes.ts",
     "prepare:remote": "yarn update-types-remote && yarn prisma db pull && yarn prisma generate && yarn prisma-case-format --file prisma/schema.prisma  && yarn prisma generate"
   },
   "dependencies": {
@@ -22,10 +22,15 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
+    "ai": "^2.1.32",
+    "base64-arraybuffer": "^1.0.2",
     "next": "^13.4.1",
+    "openai-edge": "^1.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "replicate": "^0.14.1",
     "superjson": "1.12.2",
+    "trpc-openapi": "^1.2.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -44,6 +49,7 @@
     "prettier-plugin-tailwindcss": "^0.2.6",
     "prisma": "^4.11.0",
     "prisma-case-format": "^1.4.1",
+    "supabase": "^1.82.6",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.0.2"
   },

@@ -19,6 +19,10 @@ const config = {
     defaultLocale: "en",
   },
 
+  images: {
+    domains: ["eiuckazvagocqjiisium.supabase.co"],
+  },
+
   typescript: {
     ignoreBuildErrors: true,
   },

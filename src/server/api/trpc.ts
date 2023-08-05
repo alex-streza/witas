@@ -17,6 +17,7 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { prisma } from "~/server/db";
+import { replicate } from "~/server/replicate";
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -24,9 +25,10 @@ import { prisma } from "~/server/db";
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
+export const createTRPCContext = (_opts: CreateNextContextOptions) => {
   return {
     prisma,
+    replicate,
   };
 };
 
@@ -39,21 +41,25 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
  */
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import type { OpenApiMeta } from "trpc-openapi";
 import { ZodError } from "zod";
 
-const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
-});
+const t = initTRPC
+  .meta<OpenApiMeta>()
+  .context<typeof createTRPCContext>()
+  .create({
+    transformer: superjson,
+    errorFormatter({ shape, error }) {
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          zodError:
+            error.cause instanceof ZodError ? error.cause.flatten() : null,
+        },
+      };
+    },
+  });
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
