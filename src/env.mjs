@@ -13,6 +13,11 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     OPENAI_API_KEY: z.string().min(1),
     REPLICATE_API_TOKEN: z.string().min(1),
+    WS: z.string().min(1),
+    SERVER_ID: z.string().min(1).optional(),
+    CHANNEL_ID: z.string().min(1).optional(),
+    SALAI_TOKEN: z.string().min(1).optional(),
+    HUGGINGFACE_TOKEN: z.string().min(1).optional(),
   },
 
   /**
@@ -41,6 +46,11 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY,
+    SERVER_ID: process.env.SERVER_ID,
+    CHANNEL_ID: process.env.CHANNEL_ID,
+    SALAI_TOKEN: process.env.SALAI_TOKEN,
+    HUGGINGFACE_TOKEN: process.env.HUGGINGFACE_TOKEN,
+    WS: process.env.WS,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });

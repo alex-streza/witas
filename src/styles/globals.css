@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply relative grid h-screen w-screen place-content-center bg-zinc-900 p-10;
+h1 {
+  @apply font-serif;
+}
+
+body > * P {
+  @apply font-sans;
 }

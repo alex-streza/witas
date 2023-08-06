@@ -1,24 +1,40 @@
 import "~/styles/globals.css";
 
 export const metadata = {
-  title: "Wait is that a sticker?",
   description:
-    "WITAS allows anyone to generate state-of-the-art stickers using multiple AI models to iterate, upscale, crop and edit images.",
+    "Unleash Creativity: Explore our AI-powered sticker emporium - a diverse collection of ready-to-sell stickers, crafted by cutting-edge technology",
+  canonical: "https://witas.vercel.app",
+  title: "Wait is that a sticker?",
   openGraph: {
-    images: ["/images/og.png"],
+    type: "website",
+    locale: "en_IE",
+    url: "https://witas.vercel.app",
+    siteName: "WITAS",
+    images: [
+      {
+        url: "/images/og.png",
+        width: 1200,
+        height: 630,
+        alt: "WITAS",
+      },
+    ],
+  },
+  icons: {
+    icon: "/favicons/favicon.ico",
+    shortcut: "/favicon-32x32.png",
+    apple: "/favicon-32x32.png",
   },
 };
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <html lang="en">
-        <head />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <body>{children}</body>
-      </html>
-    </>
+    <html lang="en">
+      <link rel="stylesheet" href="https://use.typekit.net/yjv8oem.css"></link>
+      <link rel="stylesheet" href="https://use.typekit.net/yjv8oem.css"></link>
+      <body className="relative h-screen w-screen overflow-hidden bg-zinc-900">
+        {children}
+      </body>
+    </html>
   );
 }
 export default RootLayout;
