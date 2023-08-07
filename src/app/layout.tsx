@@ -1,3 +1,4 @@
+import { Navigation } from "~/components/navigation";
 import "~/styles/globals.css";
 
 export const metadata = {
@@ -29,9 +30,18 @@ export const metadata = {
 function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <link rel="stylesheet" href="https://use.typekit.net/yjv8oem.css"></link>
-      <link rel="stylesheet" href="https://use.typekit.net/yjv8oem.css"></link>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://use.typekit.net/yjv8oem.css"
+        ></link>
+        <link
+          rel="stylesheet"
+          href="https://use.typekit.net/yjv8oem.css"
+        ></link>
+      </head>
       <body className="relative h-screen w-screen overflow-hidden bg-zinc-900">
+        <Navigation />
         {children}
       </body>
     </html>

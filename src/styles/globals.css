@@ -6,6 +6,6 @@ h1 {
   @apply font-serif;
 }
 
-body > * P {
-  @apply font-sans;
+body > * {
+  @apply font-sans text-white;
 }
