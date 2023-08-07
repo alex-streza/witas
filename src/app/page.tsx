@@ -9,11 +9,11 @@ export default function Page() {
       <div className="absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 px-5 text-white md:h-[600px] md:w-[978px]">
         <div className="relative grid h-full w-full place-content-center">
           <StickerScene />
-          <h1 className="h-20 text-[80px] font-extrabold md:h-28 md:text-9xl md:text-[180px]">
+          <h1 className="h-20 text-[80px] font-extrabold md:h-32 md:text-9xl md:text-[180px]">
             WITAS
           </h1>
           <ShuffleText
-            className="w=full mt-3 max-w-[300px] text-xs font-medium text-zinc-400 md:w-[400px] md:max-w-full md:max-w-none md:text-2xl"
+            className="w=full mt-3 max-w-[300px] text-xs font-medium text-zinc-400 md:mt-8 md:w-[400px] md:max-w-full md:max-w-full md:max-w-none md:text-xl"
             text="Wait is that a sticker?"
           />
         </div>
