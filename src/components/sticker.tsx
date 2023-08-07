@@ -81,9 +81,9 @@ export const SpikySticker = ({ className = "", text }: StickerProps) => (
           y2="187.073"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#58D7B9" />
-          <stop offset="0.583333" stop-color="#27D1A8" />
-          <stop offset="1" stop-color="#58D7B9" />
+          <stop stopColor="#58D7B9" />
+          <stop offset="0.583333" stopColor="#27D1A8" />
+          <stop offset="1" stopColor="#58D7B9" />
         </linearGradient>
       </defs>
     </svg>
