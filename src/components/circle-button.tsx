@@ -6,15 +6,19 @@ export const CircleButton = ({
   text,
   onClick,
   className = "",
+  disabled = false,
 }: {
   text: string;
   className?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }) => {
+  const fontSize = 80 - text.length * 8.5;
+
   return (
     <Parallax>
       <motion.button
-        className={`relative ${className}`}
+        className={`relative flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
         onClick={onClick}
         initial={{
           scale: 0,
@@ -31,8 +35,12 @@ export const CircleButton = ({
             damping: 10,
           },
         }}
+        disabled={disabled}
       >
-        <span className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 font-serif text-6xl text-zinc-900">
+        <span
+          style={{ fontSize, height: 120, width: 100 }}
+          className="absolute z-10 grid place-content-center font-serif text-zinc-900"
+        >
           {text}
         </span>
         <svg

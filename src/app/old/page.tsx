@@ -23,9 +23,9 @@ export default function Page() {
       {/* <form onSubmit={handleSubmit}>
         <input
           className="fixed left-5 top-20 mb-8 w-full rounded border border-gray-300 p-2 shadow-xl"
-          value={input}
           placeholder="Enter the prompt main subject/character"
           onChange={handleInputChange}
+          value={input}
         />
       </form>
       {completion && (

@@ -17,6 +17,7 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { prisma } from "~/server/db";
+import { supabase } from "~/server/supabase/supabaseClient";
 import { replicate } from "~/server/replicate";
 
 /**
@@ -29,6 +30,7 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
   return {
     prisma,
     replicate,
+    supabase: supabase(),
   };
 };
 

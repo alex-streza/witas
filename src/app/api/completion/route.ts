@@ -63,8 +63,6 @@ export async function POST(req: Request) {
     presence_penalty: 0,
   });
 
-  console.log("response", response);
-
   // Convert the response into a friendly text-stream
   const stream = OpenAIStream(response);
   // Respond with the stream

@@ -14,7 +14,9 @@ export interface Message {
 }
 
 export const ImagineUI = () => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(
+    "a harry potter sticker, cute, cartoon, kawaii, wizard"
+  );
   const [inputDisable, setInputDisable] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -42,6 +44,7 @@ export const ImagineUI = () => {
           newMessage.msgID = data.id;
           newMessage.progress = data.progress;
           newMessage.content = data.content;
+          console.log("newMessage", newMessage);
           setMessages([...oldMessages, newMessage]);
         }
       );
@@ -75,7 +78,6 @@ export const ImagineUI = () => {
         <h1>
           {text} {`(${progress ?? 0})`}
         </h1>
-
         <img className="ml-2 rounded-xl" width={400} src={img} />
       </div>
     );
@@ -85,7 +87,7 @@ export const ImagineUI = () => {
     <div className="mx-auto h-full w-full overflow-y-hidden px-4">
       <div className="absolute bottom-10 left-0 right-0 z-10 mx-auto w-3/4 xl:w-3/5 ">
         <textarea
-          className="w-full"
+          className="w-full text-gray-900"
           disabled={inputDisable}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

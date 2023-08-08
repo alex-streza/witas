@@ -29,6 +29,7 @@
     "acronym": "^1.0.0",
     "ai": "^2.1.32",
     "base64-arraybuffer": "^1.0.2",
+    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "framer-motion": "^10.15.1",

@@ -1,5 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button } from "./ui/button";
+"use client";
+import { Download } from "@phosphor-icons/react";
+import { useEffect, useRef, useState } from "react";
+import {
+  compressImage,
+  fileToBase64,
+  urlToBase64,
+  urltoFile,
+} from "~/utils/images";
 
 export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
   const [base64Images, setBase64Images] = useState<string[]>([]);
@@ -10,7 +17,7 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
     useRef<HTMLCanvasElement>(null),
     useRef<HTMLCanvasElement>(null),
   ];
-  console.log("imageUrl", imageUrl);
+
   useEffect(() => {
     const inputImage = new Image();
     inputImage.crossOrigin = "anonymous"; // Enable CORS if needed
@@ -92,30 +99,47 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
     };
   }, [canvasRefs, imageUrl]);
 
-  const handleDownload = (base64Image: string, index: number) => {
+  const handleDownload = async (base64Image: string, index: number) => {
+    const { url: optimizedUri } = (await fetch("/api/optimize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        image: await fileToBase64(
+          await compressImage(
+            await urltoFile(base64Image, "image.png", "image/png")
+          )
+        ),
+      }),
+    }).then((res) => res.json())) as { url?: string };
+
+    if (!optimizedUri) return;
+
     const downloadLink = document.createElement("a");
-    downloadLink.href = base64Image;
-    downloadLink.download = `image_part_${index}.png`;
+    downloadLink.href = await urlToBase64(optimizedUri);
+    downloadLink.download = `sticker_v${index}.png`;
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
   };
 
   return (
-    <div>
-      <img src={imageUrl} alt="Input" className="aspect-square w-96" />
-      <div className="grid grid-cols-2">
+    <div className="absolute inset-0 z-20 aspect-square w-full">
+      <div className="grid h-full grid-cols-2">
         {canvasRefs.map((canvasRef, index) => (
-          <div key={index}>
-            <canvas ref={canvasRef} className="h-[300px] w-[300px]"></canvas>
+          <div className="relative h-full w-full" key={index}>
+            <canvas ref={canvasRef} className="h-full w-full"></canvas>
             {base64Images.length > 0 && (
-              <Button
+              <button
+                className="absolute bottom-0 left-0 z-10 grid w-full place-content-center bg-gradient-to-b from-transparent to-zinc-900 p-3"
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 onClick={() =>
                   handleDownload(base64Images[index] as string, index)
                 }
               >
-                Download Part {index + 1}
-              </Button>
+                <Download size={32} />
+              </button>
             )}
           </div>
         ))}
