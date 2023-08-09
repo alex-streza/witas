@@ -9,12 +9,12 @@ import { useClickOutside, useMediaQuery } from "@react-hookz/web";
 import { Hamburger } from "@phosphor-icons/react";
 
 const linkVariants = cva(
-  "rounded-[32px] px-3 py-1.5 md:px-6 bg-white md:text-lg text-zinc-900 md:py-3.5 font-serif uppercase",
+  "rounded-[32px] px-3 py-1.5 md:px-6 md:text-lg text-zinc-900 md:py-3.5 font-serif uppercase",
   {
     variants: {
       active: {
         false: "bg-white",
-        true: "bg-primary",
+        true: "bg-green",
       },
     },
     defaultVariants: {
@@ -69,7 +69,7 @@ export const Navigation = () => {
   return (
     <motion.nav
       ref={ref}
-      className="fixed right-5 top-5 z-20 flex max-w-[363px] flex-wrap items-end justify-end gap-3 md:right-10 md:top-10"
+      className="fixed right-5 top-5 z-50 flex max-w-[363px] flex-wrap items-end justify-end gap-3 md:right-10 md:top-10"
       initial="hidden"
       animate="visible"
       exit="hidden"
@@ -122,7 +122,8 @@ export const Navigation = () => {
             <MotionLink
               href="/explore"
               className={linkVariants({
-                active: pathname === "/explore",
+                active:
+                  pathname === "/explore" || pathname?.includes("sticker"),
               })}
               variants={variants}
             >

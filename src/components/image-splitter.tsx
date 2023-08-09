@@ -7,8 +7,11 @@ import {
   urlToBase64,
   urltoFile,
 } from "~/utils/images";
+import { Spinner } from "./spinner";
 
 export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
+  const [loadingIndexes, setLoadingIndexes] = useState<number[]>([]);
+
   const [base64Images, setBase64Images] = useState<string[]>([]);
 
   const canvasRefs = [
@@ -97,10 +100,12 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
 
       setBase64Images(base64ImagesArr);
     };
-  }, [canvasRefs, imageUrl]);
+  }, [imageUrl]);
 
   const handleDownload = async (base64Image: string, index: number) => {
-    const { url: optimizedUri } = (await fetch("/api/optimize", {
+    setLoadingIndexes([...loadingIndexes, index]);
+
+    const res = await fetch("/api/optimize", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -112,7 +117,9 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
           )
         ),
       }),
-    }).then((res) => res.json())) as { url?: string };
+    });
+
+    const { uri: optimizedUri } = (await res.json()) as { uri: string };
 
     if (!optimizedUri) return;
 
@@ -122,6 +129,8 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+
+    setLoadingIndexes(loadingIndexes.filter((i) => i !== index));
   };
 
   return (
@@ -138,7 +147,10 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
                   handleDownload(base64Images[index] as string, index)
                 }
               >
-                <Download size={32} />
+                {loadingIndexes.filter((loadingIndex) => loadingIndex === index)
+                  .length > 0 && <Spinner />}
+                {loadingIndexes.filter((loadingIndex) => loadingIndex === index)
+                  .length == 0 && <Download size={32} />}
               </button>
             )}
           </div>

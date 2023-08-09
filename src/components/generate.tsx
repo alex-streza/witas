@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Brain, Download, Info, Share } from "@phosphor-icons/react";
+import { ArrowLeft, Brain, Info } from "@phosphor-icons/react";
 import { useIntervalEffect, useLocalStorageValue } from "@react-hookz/web";
 import { useCompletion } from "ai/react";
 import { motion, useAnimate } from "framer-motion";
@@ -10,6 +10,7 @@ import { compressImage, fileToBase64, urltoFile } from "~/utils/images";
 import { Imagine } from "~/utils/midjourney";
 import { CircleButton } from "./circle-button";
 import { ImageSplitter } from "./image-splitter";
+import { Spinner } from "./spinner";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -76,6 +77,9 @@ const Result = ({
         await animate(".download-container", {
           opacity: "1",
         });
+        await animate(".info", {
+          opacity: "0",
+        });
         await animate(scope.current, {
           justifyContent: "start",
           alignItems: "start",
@@ -108,7 +112,7 @@ const Result = ({
       ref={scope}
       className="flex h-full flex-col items-center justify-between"
     >
-      {splitImages && <ImageSplitter imageUrl={image} />}
+      {splitImages && image && <ImageSplitter imageUrl={image} />}
       <motion.h1 className="relative mt-16 p-1.5 font-serif text-2xl">
         <motion.span
           className="absolute -left-1 top-0 -z-10 h-full bg-zinc-500 bg-opacity-40"
@@ -150,9 +154,9 @@ const Result = ({
           Using Midjourney, generation may take up to a minute so be patient
         </span>
       </div>
-      <motion.div className="download-container z-10 mt-[calc(100vw)] flex w-full flex-col gap-5 opacity-0">
-        <motion.h1 className="font-serif text-2xl">DOWNLOAD STICKERS</motion.h1>
-        <div className="flex gap-5">
+      <motion.div className="download-container z-20 mt-[calc(100vw)] flex w-full flex-col gap-5 opacity-0">
+        {/* <motion.h1 className="font-serif text-2xl">DOWNLOAD STICKERS</motion.h1> */}
+        {/* <div className="flex gap-5">
           <Button variant="secondary" className="w-full">
             <Download />
             Download all
@@ -161,7 +165,7 @@ const Result = ({
             <Share />
             Share
           </Button>
-        </div>
+        </div> */}
         <div className="mb-5 flex flex-col gap-3">
           <Label htmlFor="prompt" className="font-serif text-xl">
             Prompt
@@ -174,8 +178,10 @@ const Result = ({
             disabled
           />
         </div>
-        <div className="absolute -bottom-12 right-1/2 translate-x-1/2 rotate-12">
-          <CircleButton text="GO" onClick={() => setStep("PROMPT")} />
+        <div className="flex w-full justify-end">
+          <div className="rotate-12">
+            <CircleButton text="GO" onClick={() => setStep("PROMPT")} />
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -209,7 +215,9 @@ export const Generate = ({ images }: { images: string[] }) => {
     },
   });
 
-  const [step, setStep] = useState<Step>("TOKENS");
+  const [loadingSettings, setLoadingSettings] = useState(true);
+
+  const [step, setStep] = useState<Step>("DONE");
   const [messages, setMessages] = useState<Message[]>([]);
   const [promptData, setPromptData] = useState<{
     prompt: string;
@@ -220,11 +228,12 @@ export const Generate = ({ images }: { images: string[] }) => {
   });
   const [completedImage, setCompletedImage] = useState<string>();
 
-  const { completion, input, handleInputChange, handleSubmit } = useCompletion({
-    body: {
-      styles: "cartoon, surrealist",
-    },
-  });
+  const { completion, input, handleInputChange, handleSubmit, isLoading } =
+    useCompletion({
+      body: {
+        styles: "cartoon, surrealist",
+      },
+    });
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -295,6 +304,15 @@ export const Generate = ({ images }: { images: string[] }) => {
   };
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (env?.authorization && env?.channelId && env?.serverId) {
+        setStep("PROMPT");
+      }
+      setLoadingSettings(false);
+    }
+  }, []);
+
+  useEffect(() => {
     const id = setTimeout(() => {
       if (step === "LOADING") setCompletedImage(images[0]);
     }, 2000);
@@ -312,7 +330,12 @@ export const Generate = ({ images }: { images: string[] }) => {
 
   return (
     <>
-      {step === "TOKENS" && (
+      {loadingSettings && (
+        <div className="absolute inset-0 flex items-center justify-center text-white">
+          <Spinner className="h-12 w-12" />
+        </div>
+      )}
+      {!loadingSettings && step === "TOKENS" && (
         <>
           <h1 className="font-serif text-2xl">Enter tokens</h1>
           <p className="mt-3 text-sm text-zinc-300">
@@ -332,20 +355,20 @@ export const Generate = ({ images }: { images: string[] }) => {
           </p>
           <div className="mt-5">
             <div className="mb-5 flex flex-col gap-3">
-              <Label htmlFor="channelId">Channel ID</Label>
-              <Input
-                name="channelId"
-                placeholder="Paste channel_id"
-                value={env?.channelId}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="mb-5 flex flex-col gap-3">
               <Label htmlFor="serverId">Server ID</Label>
               <Input
                 name="serverId"
                 placeholder="Paste server_id"
                 value={env?.serverId}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-5 flex flex-col gap-3">
+              <Label htmlFor="channelId">Channel ID</Label>
+              <Input
+                name="channelId"
+                placeholder="Paste channel_id"
+                value={env?.channelId}
                 onChange={handleChange}
               />
             </div>
@@ -373,12 +396,14 @@ export const Generate = ({ images }: { images: string[] }) => {
               />
             </div>
           </div>
-          <div className="absolute -bottom-12 right-1/2 translate-x-1/2 rotate-12">
-            <CircleButton text="GO" onClick={() => setStep("PROMPT")} />
+          <div className="flex w-full justify-end">
+            <div className="rotate-12">
+              <CircleButton text="GO" onClick={() => setStep("PROMPT")} />
+            </div>
           </div>
         </>
       )}
-      {step === "PROMPT" && (
+      {!loadingSettings && step === "PROMPT" && (
         <>
           <button onClick={() => setStep("TOKENS")}>
             <ArrowLeft size={32} />
@@ -399,9 +424,18 @@ export const Generate = ({ images }: { images: string[] }) => {
                 onChange={handleInputChange}
                 value={input}
               />
-              <Button variant="secondary" type="submit" disabled={input === ""}>
-                <Brain />
-                <span>Generate prompt</span>
+              <Button
+                variant="secondary"
+                type="submit"
+                disabled={input === "" || isLoading}
+              >
+                {isLoading && <Spinner />}
+                {!isLoading && (
+                  <>
+                    <Brain />
+                    <span>Generate prompt</span>
+                  </>
+                )}
               </Button>
             </form>
             <div className="mb-5 flex flex-col gap-3">
@@ -429,16 +463,18 @@ export const Generate = ({ images }: { images: string[] }) => {
               </span>
             </div>
           </div>
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 rotate-12">
-            <CircleButton
-              text="GO"
-              onClick={handleMessageSend}
-              disabled={promptData.prompt === ""}
-            />
+          <div className="flex w-full justify-end">
+            <div className="rotate-12">
+              <CircleButton
+                text="GO"
+                onClick={handleMessageSend}
+                disabled={promptData.prompt === ""}
+              />
+            </div>
           </div>
         </>
       )}
-      {(step === "LOADING" || step === "DONE") && (
+      {((!loadingSettings && step === "LOADING") || step === "DONE") && (
         <Result
           prompt={promptData.prompt}
           images={images}
