@@ -18,7 +18,7 @@ export const CircleButton = ({
   return (
     <Parallax>
       <motion.button
-        className={`relative flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        className={`relative flex items-center justify-center overflow-hidden disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
         onClick={onClick}
         initial={{
           scale: 0,

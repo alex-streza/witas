@@ -14,13 +14,39 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(405).send("Method not allowed");
   }
 
-  const { prompt, image } = req.body as {
+  const { prompt, email, image } = req.body as {
     prompt: string;
     image: string;
+    email: string;
   };
 
+  let userId: number | undefined;
+
+  if (email) {
+    const { data: users } = await supabase()
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .limit(1);
+
+    userId = users?.[0]?.id;
+  }
+
+  if (!userId) {
+    const { data } = await supabase()
+      .from("users")
+      .insert([
+        {
+          email,
+        },
+      ])
+      .select();
+
+    userId = data?.[0]?.id;
+  }
+
   const { data: stickers } = await supabase()
-    .from("Sticker")
+    .from("stickers")
     .insert([
       {
         prompt,
@@ -30,7 +56,7 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (stickers) {
     const { data, error } = await supabase()
-      .storage.from("stickers")
+      .storage.from("raw")
       .upload(
         `${stickers[0]?.id ?? Math.random() * 10000}.png`,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
@@ -46,9 +72,10 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { error: updateError } = await supabase()
-      .from("Sticker")
+      .from("stickers")
       .update({
         url: data?.path,
+        userId,
       })
       .eq("id", stickers[0]?.id);
 

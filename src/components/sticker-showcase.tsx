@@ -3,6 +3,7 @@
 import { Copy } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { env } from "~/env.mjs";
@@ -15,6 +16,8 @@ export const StickerShowcase = ({
   id: number;
   prompt: string;
 }) => {
+  const [savingColors, setSavingColors] = useState(false);
+
   const imageUrl = `${env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/stickers/${id}.png`;
   const colors = useColors(imageUrl);
 
@@ -22,19 +25,40 @@ export const StickerShowcase = ({
     void navigator.clipboard.writeText(text);
   };
 
+  useEffect(() => {
+    if (colors.length > 0 && !savingColors) {
+      // setSavingColors(true);
+      // fetch("/api/colors", {
+      //   method: "POST",
+      //   headers: new Headers({
+      //     "Content-Type": "application/json",
+      //   }),
+      //   body: JSON.stringify({
+      //     colors: colors.map((col) => ({
+      //       name: col.name ?? "",
+      //       percentage: Math.floor(col.percentage ?? 0 * 100),
+      //       color: col.color,
+      //     })),
+      //   }),
+      // })
+      //   .catch((err) => console.error(err))
+      //   .finally(() => setSavingColors(false));
+    }
+  }, [colors]);
+
   return (
     <>
       <div className="absolute left-0 top-0 z-20 w-full bg-gradient-to-b from-zinc-900 to-transparent p-5">
         <motion.h1 className="font-serif text-2xl">STICKER #{id}</motion.h1>
       </div>
       <Image
-        className="generated-image aspect-square w-[576px]"
+        className="generated-image absolute left-0 top-0 aspect-square w-[576px]"
         src={imageUrl}
         alt=""
         width={512}
         height={512}
       />
-      <div className="mt-5 flex flex-wrap gap-3">
+      <div className="mt-[100vw] flex flex-wrap gap-3">
         {colors?.map((color) => (
           <button
             key={color.color}

@@ -1,7 +1,11 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { defaultOutputSchema } from "~/utils/schema";
+import {
+  defaultOutputSchema,
+  replicateWebhookInputSchema,
+} from "~/utils/schema";
 
 export const stickersRouter = createTRPCRouter({
   optimizeImage: publicProcedure
@@ -29,6 +33,10 @@ export const stickersRouter = createTRPCRouter({
           ...input,
           scale: 8,
         },
+        webhook: `${
+          process.env.VERCEL_URL ?? "http://localhost:3000"
+        }/api/upscale-webhook`,
+        webhook_events_filter: ["completed"],
       })) as unknown as string;
 
       const modelRemBg =
@@ -43,6 +51,58 @@ export const stickersRouter = createTRPCRouter({
         message: "Image upscaled",
         status: 200,
         url: outputRemBg,
+      };
+    }),
+  upscaleWebhook: publicProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: "/upscale-webhook",
+      },
+    })
+    .input(replicateWebhookInputSchema)
+    .output(defaultOutputSchema)
+    .mutation(({ input, ctx }) => {
+      console.log("input", input);
+
+      return {
+        status: 200,
+        message: "Upscale webhook received",
+      };
+    }),
+  addColors: publicProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: "/colors",
+      },
+    })
+    .input(
+      z.object({
+        colors: z.array(
+          z.object({
+            color: z.string(),
+            percentage: z.number(),
+            name: z.string(),
+          })
+        ),
+      })
+    )
+    .output(defaultOutputSchema)
+    .mutation(async ({ input: { colors }, ctx }) => {
+      const { data, error } = await ctx.supabase.from("colors").insert(colors);
+
+      console.log("data", data);
+
+      if (error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error.message,
+        });
+
+      return {
+        status: 200,
+        message: "Colors added",
       };
     }),
 });

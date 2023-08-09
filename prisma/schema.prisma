@@ -13,7 +13,7 @@ enum StickerType {
   MIDJOURNEY
 }
 
-model Sticker {
+model stickers {
   id        Int      @id @default(autoincrement())
   url    String
   type    StickerType

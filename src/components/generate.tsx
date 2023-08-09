@@ -77,7 +77,10 @@ const Result = ({
         await animate(".download-container", {
           opacity: "1",
         });
-        await animate(".info", {
+        void animate(".info-container", {
+          opacity: "0",
+        });
+        void animate(".prompt-text", {
           opacity: "0",
         });
         await animate(scope.current, {
@@ -146,7 +149,9 @@ const Result = ({
             ))}
           </motion.div>
         </motion.div>
-        <p className="text-center text-sm text-zinc-300">{prompt}</p>
+        <p className="prompt-text text-center text-sm text-zinc-300">
+          {prompt}
+        </p>
       </div>
       <div className="info-container mt-auto flex max-w-[200px] items-start gap-2 text-xs text-zinc-400">
         <Info size={24} />
@@ -178,9 +183,9 @@ const Result = ({
             disabled
           />
         </div>
-        <div className="flex w-full justify-end">
+        <div className="relative flex w-full justify-end">
           <div className="rotate-12">
-            <CircleButton text="GO" onClick={() => setStep("PROMPT")} />
+            <CircleButton text="RESTART" onClick={() => setStep("PROMPT")} />
           </div>
         </div>
       </motion.div>
@@ -217,7 +222,14 @@ export const Generate = ({ images }: { images: string[] }) => {
 
   const [loadingSettings, setLoadingSettings] = useState(true);
 
-  const [step, setStep] = useState<Step>("DONE");
+  const [step, setStep] = useState<Step>("TOKENS");
+  const { value: email, set: setEmail } = useLocalStorageValue<string>(
+    "email",
+    {
+      defaultValue: "",
+    }
+  );
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [promptData, setPromptData] = useState<{
     prompt: string;
@@ -257,6 +269,7 @@ export const Generate = ({ images }: { images: string[] }) => {
       }),
       body: JSON.stringify({
         prompt,
+        email,
         image: await fileToBase64(
           await compressImage(await urltoFile(image, "image.png", "image/png"))
         ),
@@ -415,8 +428,17 @@ export const Generate = ({ images }: { images: string[] }) => {
           </p>
           <div className="mt-5">
             <form className="mb-5 flex flex-col gap-3" onSubmit={handleSubmit}>
+              <Label htmlFor="email" className="font-serif text-xl">
+                Your e-mail
+              </Label>
+              <Input
+                name="email"
+                placeholder="E-mail to receive optimized stickers"
+                onChange={(ev) => setEmail(ev.target.value)}
+                value={email}
+              />
               <Label htmlFor="subject" className="font-serif text-xl">
-                Sticker Subject
+                stickers Subject
               </Label>
               <Input
                 name="subject"
@@ -466,7 +488,7 @@ export const Generate = ({ images }: { images: string[] }) => {
           <div className="flex w-full justify-end">
             <div className="rotate-12">
               <CircleButton
-                text="GO"
+                text="GENERATE"
                 onClick={handleMessageSend}
                 disabled={promptData.prompt === ""}
               />

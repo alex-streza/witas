@@ -5,8 +5,8 @@ import { supabase } from "~/server/supabase/supabaseClient";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { data: sticker } = await supabase()
-    .from("Sticker")
-    .select("*")
+    .from("stickers")
+    .select("*,colors (*)")
     .eq("id", params.id)
     .single();
 
@@ -15,10 +15,12 @@ export default async function Page({ params }: { params: { id: string } }) {
       {sticker && (
         <StickerShowcase id={sticker.id} prompt={sticker.prompt ?? ""} />
       )}
-      <div className="absolute -bottom-12 right-1/2 translate-x-1/2 rotate-12">
-        <Link href="/generate">
-          <CircleButton text="GO" />
-        </Link>
+      <div className="mt-auto flex w-full justify-end">
+        <div className="rotate-12">
+          <Link href="/generate">
+            <CircleButton text="RESTART" />
+          </Link>
+        </div>
       </div>
     </>
   );

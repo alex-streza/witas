@@ -3,10 +3,10 @@ import { Button } from "./ui/button";
 
 interface NameColorsResponse {
   paletteTitle: string;
-  colors: Color[];
+  colors: colors[];
 }
 
-interface Color {
+interface colors {
   name: string;
   hex: string;
   rgb: RGB;

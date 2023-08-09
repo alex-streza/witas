@@ -3,13 +3,13 @@ import { supabase } from "~/server/supabase/supabaseClient";
 
 export default async function Page() {
   const { count = 0 } = await supabase()
-    .from("Sticker")
+    .from("stickers")
     .select("id", { count: "exact" });
 
   const maxCount = count ?? 0;
 
   const { data } = await supabase()
-    .from("Sticker")
+    .from("stickers")
     .select("*")
     .range(Math.random() * maxCount, Math.random() * maxCount + maxCount)
     .limit(9);

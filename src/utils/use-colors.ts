@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 
 interface NameColorsResponse {
   paletteTitle: string;
-  colors: Color[];
+  colors: colors[];
 }
 
-interface Color {
+interface colors {
   name: string;
   hex: string;
   rgb: RGB;
@@ -64,7 +64,7 @@ const getColorNames = async (topColors: TopColor[]) => {
 
       return rgbToHex(raw);
     })
-    .filter((hex) => hex !== "");
+    .filter((hex) => hex !== "" && hex.length == 6);
 
   const res = await fetch(
     `https://api.color.pizza/v1/?values=${hexes.join(",")}&list=bestOf`
