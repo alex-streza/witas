@@ -31,6 +31,7 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
     prisma,
     replicate,
     supabase: supabase(),
+    query: _opts.req.query,
   };
 };
 

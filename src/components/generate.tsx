@@ -42,12 +42,14 @@ const positions = [
 ];
 
 const Result = ({
+  id,
   prompt,
   images,
   image,
   progress = "0%",
   setStep,
 }: {
+  id: number;
   prompt: string;
   images: string[];
   setStep: (step: Step) => void;
@@ -115,7 +117,9 @@ const Result = ({
       ref={scope}
       className="flex h-full flex-col items-center justify-between"
     >
-      {splitImages && image && <ImageSplitter imageUrl={image} />}
+      {splitImages && image && (
+        <ImageSplitter imageUrl={image} stickerId={id} />
+      )}
       <motion.h1 className="relative mt-16 p-1.5 font-serif text-2xl">
         <motion.span
           className="absolute -left-1 top-0 -z-10 h-full bg-zinc-500 bg-opacity-40"
@@ -220,9 +224,11 @@ export const Generate = ({ images }: { images: string[] }) => {
     },
   });
 
-  const [loadingSettings, setLoadingSettings] = useState(true);
+  // const [loadingSettings, setLoadingSettings] = useState(true);
+  const [loadingSettings, setLoadingSettings] = useState(false);
+  const [stickerId, setStickerId] = useState<number>();
 
-  const [step, setStep] = useState<Step>("TOKENS");
+  const [step, setStep] = useState<Step>("DONE");
   const { value: email, set: setEmail } = useLocalStorageValue<string>(
     "email",
     {
@@ -238,7 +244,10 @@ export const Generate = ({ images }: { images: string[] }) => {
     prompt: "",
     subject: "",
   });
-  const [completedImage, setCompletedImage] = useState<string>();
+  // const [completedImage, setCompletedImage] = useState<string>();
+  const [completedImage, setCompletedImage] = useState<string>(
+    "https://cdn.discordapp.com/attachments/1087721443980230766/1137470431016792114/astre9_a_sticker_image_of_a_cute_couple_in_desertpunk_style_wit_c0072b57-dd05-4df4-ad0a-d662a45ee7c2.png"
+  );
 
   const { completion, input, handleInputChange, handleSubmit, isLoading } =
     useCompletion({
@@ -274,7 +283,12 @@ export const Generate = ({ images }: { images: string[] }) => {
           await compressImage(await urltoFile(image, "image.png", "image/png"))
         ),
       }),
-    }).catch((err) => console.error(err));
+    })
+      .then((res) => res.json())
+      .then((data: { id: number }) => {
+        setStickerId(data?.id);
+      })
+      .catch((err) => console.error(err));
   };
 
   const handleMessageSend = async () => {
@@ -317,12 +331,12 @@ export const Generate = ({ images }: { images: string[] }) => {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (env?.authorization && env?.channelId && env?.serverId) {
-        setStep("PROMPT");
-      }
-      setLoadingSettings(false);
-    }
+    // if (typeof window !== "undefined") {
+    //   if (env?.authorization && env?.channelId && env?.serverId) {
+    //     setStep("PROMPT");
+    //   }
+    //   setLoadingSettings(false);
+    // }
   }, []);
 
   useEffect(() => {
@@ -504,6 +518,7 @@ export const Generate = ({ images }: { images: string[] }) => {
           image={completedImage}
           setStep={setStep}
           progress={messages[messages.length - 1]?.progress}
+          id={stickerId}
         />
       )}
     </>

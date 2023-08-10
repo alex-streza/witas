@@ -7,6 +7,11 @@ import {
   replicateWebhookInputSchema,
 } from "~/utils/schema";
 
+const WEBHOOK_URL = `${
+  process.env.VERCEL_URL ??
+  "https://5ff6-2a02-2f04-e500-9d00-6a8a-20ab-a6b8-2086.ngrok.io"
+}/api/webhooks/replicate`;
+
 export const stickersRouter = createTRPCRouter({
   optimizeImage: publicProcedure
     .meta({
@@ -17,57 +22,92 @@ export const stickersRouter = createTRPCRouter({
     })
     .input(
       z.object({
+        stickerId: z.number(),
         image: z.string(),
       })
     )
-    .output(
-      defaultOutputSchema.extend({
-        url: z.string().optional(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
+    .output(defaultOutputSchema)
+    .mutation(({ input, ctx }) => {
       const modelUpscale =
         "nightmareai/real-esrgan:42fed1c4974146d4d2414e2be2c5277c7fcf05fcc3a73abf41610695738c1d7b";
-      const outputUpscale = (await ctx.replicate.run(modelUpscale, {
+      void ctx.replicate.run(modelUpscale, {
         input: {
           ...input,
-          scale: 8,
+          scale: 1.1,
         },
-        webhook: `${
-          process.env.VERCEL_URL ?? "http://localhost:3000"
-        }/api/upscale-webhook`,
+        webhook: `${WEBHOOK_URL}?stickerId=${input.stickerId}&type=upscale`,
         webhook_events_filter: ["completed"],
-      })) as unknown as string;
-
-      const modelRemBg =
-        "ilkerc/rembg:e809cddc666ccfd38a044f795cf65baab62eedc4273d096bf05935b9a3059b59";
-      const outputRemBg = (await ctx.replicate.run(modelRemBg, {
-        input: {
-          image: outputUpscale,
-        },
-      })) as unknown as string;
+      });
 
       return {
-        message: "Image upscaled",
+        message: "Image optimization started",
         status: 200,
-        url: outputRemBg,
       };
     }),
   upscaleWebhook: publicProcedure
     .meta({
       openapi: {
         method: "POST",
-        path: "/upscale-webhook",
+        path: "/webhooks/replicate",
       },
     })
     .input(replicateWebhookInputSchema)
     .output(defaultOutputSchema)
-    .mutation(({ input, ctx }) => {
-      console.log("input", input);
+    .mutation(async ({ input, ctx }) => {
+      const { type, stickerId } = ctx.query as {
+        type: string;
+        stickerId: string;
+      };
+
+      console.log("LOG WEBHOOK:", type, stickerId, input);
+
+      if (input.status !== "succeeded") {
+        return {
+          status: 200,
+          message: "Replicate webhook received",
+        };
+      }
+
+      if (type === "upscale") {
+        const modelRemBg =
+          "ilkerc/rembg:e809cddc666ccfd38a044f795cf65baab62eedc4273d096bf05935b9a3059b59";
+        void ctx.replicate.run(modelRemBg, {
+          input: {
+            image: input.output,
+          },
+          webhook: `${WEBHOOK_URL}?stickerId=${stickerId}&type=rembg`,
+          webhook_events_filter: ["completed"],
+        });
+      } else {
+        if (!input.output)
+          return {
+            status: 200,
+            message: "Replicate webhook received",
+          };
+
+        await ctx.supabase.from("replicate_jobs").insert([
+          {
+            id: input.id,
+            status: input.status,
+            result: input.output,
+            stickerId: Number(stickerId),
+          },
+        ]);
+
+        const response = await fetch(input.output);
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+
+        const { data, error } = await ctx.supabase.storage
+          .from("optimized")
+          .upload(`${stickerId ?? Math.random() * 10000}.png`, arrayBuffer, {
+            contentType: "image/png",
+          });
+      }
 
       return {
         status: 200,
-        message: "Upscale webhook received",
+        message: "Replicate webhook received",
       };
     }),
   addColors: publicProcedure

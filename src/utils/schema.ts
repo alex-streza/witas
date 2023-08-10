@@ -19,4 +19,6 @@ export const replicateWebhookInputSchema = z.object({
   error: z.string().nullable(),
   logs: z.string().nullable(),
   metrics: z.object({}),
+  // stickerId: z.number(),
+  // type: z.string(),
 });

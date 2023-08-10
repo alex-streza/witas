@@ -9,6 +9,7 @@ export const config = {
     },
   },
 };
+
 const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     res.status(405).send("Method not allowed");

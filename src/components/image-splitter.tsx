@@ -1,5 +1,5 @@
 "use client";
-import { Download } from "@phosphor-icons/react";
+import { Download, Envelope } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import {
   compressImage,
@@ -9,7 +9,13 @@ import {
 } from "~/utils/images";
 import { Spinner } from "./spinner";
 
-export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
+export const ImageSplitter = ({
+  imageUrl,
+  stickerId,
+}: {
+  imageUrl: string;
+  stickerId: number;
+}) => {
   const [loadingIndexes, setLoadingIndexes] = useState<number[]>([]);
 
   const [base64Images, setBase64Images] = useState<string[]>([]);
@@ -111,6 +117,7 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        stickerId,
         image: await fileToBase64(
           await compressImage(
             await urltoFile(base64Image, "image.png", "image/png")
@@ -150,7 +157,7 @@ export const ImageSplitter = ({ imageUrl }: { imageUrl: string }) => {
                 {loadingIndexes.filter((loadingIndex) => loadingIndex === index)
                   .length > 0 && <Spinner />}
                 {loadingIndexes.filter((loadingIndex) => loadingIndex === index)
-                  .length == 0 && <Download size={32} />}
+                  .length == 0 && <Envelope size={32} />}
               </button>
             )}
           </div>

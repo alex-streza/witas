@@ -46,33 +46,30 @@ export interface Database {
       replicate_jobs: {
         Row: {
           created_at: string;
-          id: number;
-          model: string;
+          id: string;
           result: string | null;
           status: string;
-          userId: number | null;
+          stickerId: number | null;
         };
         Insert: {
           created_at?: string;
-          id: number;
-          model: string;
+          id: string;
           result?: string | null;
           status: string;
-          userId?: number | null;
+          stickerId?: number | null;
         };
         Update: {
           created_at?: string;
-          id?: number;
-          model?: string;
+          id?: string;
           result?: string | null;
           status?: string;
-          userId?: number | null;
+          stickerId?: number | null;
         };
         Relationships: [
           {
-            foreignKeyName: "replicate_jobs_userId_fkey";
-            columns: ["userId"];
-            referencedRelation: "users";
+            foreignKeyName: "replicate_jobs_stickerId_fkey";
+            columns: ["stickerId"];
+            referencedRelation: "stickers";
             referencedColumns: ["id"];
           }
         ];
