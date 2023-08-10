@@ -1,6 +1,7 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
+import { useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect, useMemo, useRef, useState } from "react";
 import { AdditiveBlending } from "three";
 
@@ -25,8 +26,8 @@ function range(start: number, end: number, step: number = 1): number[] {
 }
 
 let defaultConfig = {
-  particles: 1500,
-  particlesSize: 1.2,
+  particles: 500,
+  particlesSize: 2,
   goldParticlesSize: 1.5,
   particlesSides: 5,
   particlesBlending: true,
@@ -101,13 +102,39 @@ const useParticlesConfig = () => {
 
 const ParticlesCanvas = () => {
   if (typeof window === "undefined") return null;
+
+  const router = useRouter();
+
   const { config, particles } = useParticlesConfig();
 
-  const Geometry = useMemo(
-    () => () =>
-      <circleGeometry args={[config.particlesSize, config.particlesSides]} />,
-    []
-  );
+  const Geometry = () =>
+    useMemo(
+      () => (
+        <circleGeometry args={[config.particlesSize, config.particlesSides]} />
+      ),
+      []
+    );
+
+  const particlesInfo = [...Array(config.particles)].map((_, index) => {
+    return {
+      id: index,
+      color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+    };
+  });
+
+  const blending = config.particlesBlending ? AdditiveBlending : undefined;
+
+  const materials = useMemo(() => {
+    const materials: { [color: string]: JSX.Element } = {};
+
+    particlesInfo.forEach((particle) => {
+      materials[particle.color] = (
+        <meshStandardMaterial color={particle.color} blending={blending} />
+      );
+    });
+
+    return materials;
+  }, [particlesInfo]);
 
   const Material = () =>
     useMemo(
@@ -120,15 +147,25 @@ const ParticlesCanvas = () => {
       []
     );
 
+  console.log("materials, particlesInfo", materials, particlesInfo);
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#000000" }}>
       <Canvas dpr={[1, 2]} camera={{ fov: 75, position: [0, 0, 500] }}>
         <ambientLight intensity={config.lightIntensity} />
-        <group>
-          {particles?.map((_, index) => (
-            <Particle key={index}>
+        <group
+          position={[0, 0, 0]}
+          rotation={[Math.PI * -0.3, 0, Math.PI * 0.5]}
+        >
+          {/* {particles?.map((_, index) => ( */}
+          {particlesInfo?.map((p, index) => (
+            <Particle
+              key={index}
+              onClick={() => router.push(`/sticker/${p.id}`)}
+            >
               <Geometry />
-              <Material />
+              {materials[p.color]}
+              {/* <Material /> */}
+              {/* <meshStandardMaterial color={p.color} blending={blending} />, */}
             </Particle>
           ))}
         </group>
@@ -137,7 +174,12 @@ const ParticlesCanvas = () => {
   );
 };
 
-const Particle = ({ children }: PropsWithChildren) => {
+const Particle = ({
+  children,
+  onClick,
+}: PropsWithChildren & {
+  onClick?: () => void;
+}) => {
   const particle = useRef(null);
   const { config } = useParticlesConfig();
 
@@ -165,7 +207,7 @@ const Particle = ({ children }: PropsWithChildren) => {
     // if odd, draw top 8 shape
     particle.current.position.x = isEven
       ? Math.sin(timer) * config.widthRadius * config.widthRatio + pathOffset
-      : Math.sin(timer) * config.widthRadius + pathOffset;
+      : Math.sin(timer) * config.widthRadius * config.widthRatio + pathOffset;
     particle.current.position.y = isEven
       ? Math.cos(timer) * config.bottomHeightRadius -
         config.bottomHeightRadius +
@@ -175,7 +217,11 @@ const Particle = ({ children }: PropsWithChildren) => {
         verticalRandomness;
   });
 
-  return <mesh ref={particle}>{children}</mesh>;
+  return (
+    <mesh ref={particle} onClick={onClick}>
+      {children}
+    </mesh>
+  );
 };
 
 export default function Page({ params }: { params: { id: string } }) {
