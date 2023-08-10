@@ -84,15 +84,27 @@ export const stickersRouter = createTRPCRouter({
             color: z.string(),
             percentage: z.number(),
             name: z.string(),
+            stickerId: z.number(),
           })
         ),
       })
     )
     .output(defaultOutputSchema)
     .mutation(async ({ input: { colors }, ctx }) => {
-      const { data, error } = await ctx.supabase.from("colors").insert(colors);
+      const { count } = await ctx.supabase
+        .from("colors")
+        .select("count", { count: "exact" })
+        .eq("stickerId", colors[0]?.stickerId)
+        .single();
 
-      console.log("data", data);
+      if (count) {
+        return {
+          status: 200,
+          message: "Colors added",
+        };
+      }
+
+      const { error } = await ctx.supabase.from("colors").insert(colors);
 
       if (error)
         throw new TRPCError({

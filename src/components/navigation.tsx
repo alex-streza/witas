@@ -122,8 +122,7 @@ export const Navigation = () => {
             <MotionLink
               href="/explore"
               className={linkVariants({
-                active:
-                  pathname === "/explore" || pathname?.includes("sticker"),
+                active: pathname?.includes("explore"),
               })}
               variants={variants}
             >

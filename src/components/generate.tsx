@@ -268,8 +268,8 @@ export const Generate = ({ images }: { images: string[] }) => {
         "Content-Type": "application/json",
       }),
       body: JSON.stringify({
-        prompt,
         email,
+        prompt: promptData.prompt,
         image: await fileToBase64(
           await compressImage(await urltoFile(image, "image.png", "image/png"))
         ),
@@ -337,7 +337,8 @@ export const Generate = ({ images }: { images: string[] }) => {
     if (completion !== "")
       setPromptData((prev) => ({
         ...prev,
-        prompt: completion + " --ar 1:1 --niji 5 --q 2 --s 750",
+        // prompt: completion + " --ar 1:1 --niji 5 --q 2 --s 750",
+        prompt: completion + " --ar 1:1",
       }));
   }, [completion]);
 

@@ -74,7 +74,7 @@ const getColorNames = async (topColors: TopColor[]) => {
   return data.colors.map((color) => color.name);
 };
 
-export const useColors = (imageUrl: string) => {
+export const useColors = (imageUrl: string, hasColors: boolean) => {
   const [colors, setColors] = useState<TopColor[]>([]);
 
   const getTopColorsFromImage = (imageUrl: string, topColorsCount = 8) => {
@@ -157,8 +157,8 @@ export const useColors = (imageUrl: string) => {
   };
 
   useEffect(() => {
-    getTopColorsFromImage(imageUrl);
-  }, [imageUrl]);
+    if (!hasColors) getTopColorsFromImage(imageUrl);
+  }, [imageUrl, hasColors]);
 
   return colors;
 };

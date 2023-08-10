@@ -11,7 +11,7 @@ export interface Database {
     Tables: {
       colors: {
         Row: {
-          color: Json;
+          color: string;
           created_at: string;
           id: number;
           name: string | null;
@@ -19,7 +19,7 @@ export interface Database {
           stickerId: number | null;
         };
         Insert: {
-          color: Json;
+          color: string;
           created_at?: string;
           id?: number;
           name?: string | null;
@@ -27,7 +27,7 @@ export interface Database {
           stickerId?: number | null;
         };
         Update: {
-          color?: Json;
+          color?: string;
           created_at?: string;
           id?: number;
           name?: string | null;

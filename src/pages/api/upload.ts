@@ -31,7 +31,7 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     userId = users?.[0]?.id;
   }
-
+  console.log("prompt", prompt);
   if (!userId) {
     const { data } = await supabase()
       .from("users")
@@ -75,6 +75,7 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       .from("stickers")
       .update({
         url: data?.path,
+        prompt,
         userId,
       })
       .eq("id", stickers[0]?.id);
