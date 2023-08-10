@@ -55,6 +55,10 @@ export const Navigation = () => {
   const pathname = usePathname();
 
   useEffect(() => {
+    setOpen(!isPhone);
+  }, [isPhone]);
+
+  useEffect(() => {
     setShowChild(true);
   }, []);
 

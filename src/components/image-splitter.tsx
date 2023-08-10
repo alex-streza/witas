@@ -108,10 +108,10 @@ export const ImageSplitter = ({
     };
   }, [imageUrl]);
 
-  const handleDownload = async (base64Image: string, index: number) => {
+  const handleOptimize = async (base64Image: string, index: number) => {
     setLoadingIndexes([...loadingIndexes, index]);
 
-    const res = await fetch("/api/optimize", {
+    await fetch("/api/optimize", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,13 +126,30 @@ export const ImageSplitter = ({
       }),
     });
 
-    const { uri: optimizedUri } = (await res.json()) as { uri: string };
+    setLoadingIndexes(loadingIndexes.filter((i) => i !== index));
 
-    if (!optimizedUri) return;
+    // const { uri: optimizedUri } = (await res.json()) as { uri: string };
+
+    // if (!optimizedUri) return;
+
+    // const downloadLink = document.createElement("a");
+    // downloadLink.href = await urlToBase64(optimizedUri);
+    // downloadLink.download = `sticker_v${index}.png`;
+    // document.body.appendChild(downloadLink);
+    // downloadLink.click();
+    // document.body.removeChild(downloadLink);
+  };
+
+  const handleDownloadRaw = async (base64Image: string, index: number) => {
+    setLoadingIndexes([...loadingIndexes, index]);
 
     const downloadLink = document.createElement("a");
-    downloadLink.href = await urlToBase64(optimizedUri);
-    downloadLink.download = `sticker_v${index}.png`;
+    (downloadLink.href = await fileToBase64(
+      await compressImage(
+        await urltoFile(base64Image, "image.png", "image/png")
+      )
+    )),
+      (downloadLink.download = `sticker_v${index}.png`);
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
@@ -147,18 +164,34 @@ export const ImageSplitter = ({
           <div className="relative h-full w-full" key={index}>
             <canvas ref={canvasRef} className="h-full w-full"></canvas>
             {base64Images.length > 0 && (
-              <button
-                className="absolute bottom-0 left-0 z-10 grid w-full place-content-center bg-gradient-to-b from-transparent to-zinc-900 p-3"
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onClick={() =>
-                  handleDownload(base64Images[index] as string, index)
-                }
-              >
-                {loadingIndexes.filter((loadingIndex) => loadingIndex === index)
-                  .length > 0 && <Spinner />}
-                {loadingIndexes.filter((loadingIndex) => loadingIndex === index)
-                  .length == 0 && <Envelope size={32} />}
-              </button>
+              <div className="absolute bottom-0 left-0 z-10 flex w-full justify-center gap-8 bg-gradient-to-b from-transparent to-zinc-900 p-3">
+                <button
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  onClick={() =>
+                    handleOptimize(base64Images[index] as string, index)
+                  }
+                >
+                  {loadingIndexes.filter(
+                    (loadingIndex) => loadingIndex === index
+                  ).length > 0 && <Spinner />}
+                  {loadingIndexes.filter(
+                    (loadingIndex) => loadingIndex === index
+                  ).length == 0 && <Envelope size={32} />}
+                </button>
+                <button
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  onClick={() =>
+                    handleDownloadRaw(base64Images[index] as string, index)
+                  }
+                >
+                  {loadingIndexes.filter(
+                    (loadingIndex) => loadingIndex === index
+                  ).length > 0 && <Spinner />}
+                  {loadingIndexes.filter(
+                    (loadingIndex) => loadingIndex === index
+                  ).length == 0 && <Download size={32} />}
+                </button>
+              </div>
             )}
           </div>
         ))}

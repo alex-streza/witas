@@ -91,6 +91,7 @@ export const stickersRouter = createTRPCRouter({
             status: input.status,
             result: input.output,
             stickerId: Number(stickerId),
+            type,
           },
         ]);
 
@@ -155,6 +156,54 @@ export const stickersRouter = createTRPCRouter({
       return {
         status: 200,
         message: "Colors added",
+      };
+    }),
+  notifyOptimizedStickers: publicProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: "/notify",
+      },
+    })
+    .input(z.void())
+    .output(defaultOutputSchema)
+    .mutation(async ({ ctx }) => {
+      const { data: jobs } = await ctx.supabase
+        .from("replicate_jobs")
+        .select("*, stickers(users(email))")
+        .eq("notified", false)
+        .like("status", "succeeded")
+        .like("type", "rembg");
+
+      const jobsGroupedByUser = jobs?.reduce(
+        (
+          acc: {
+            [key: string]: typeof jobs;
+          },
+          job
+        ) => {
+          const user = job.stickers?.users;
+
+          if (!user) return acc;
+
+          const email = user.email as keyof typeof acc;
+
+          if (!acc[email]) {
+            acc[email] = [];
+          }
+
+          acc[email]?.push(job);
+
+          return acc;
+        },
+        {}
+      );
+
+      console.log("jobsGroupedByUser", jobsGroupedByUser);
+
+      return {
+        status: 200,
+        message: "Stickers notified",
       };
     }),
 });

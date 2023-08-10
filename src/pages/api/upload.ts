@@ -89,6 +89,7 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json({
       message: "Image uploaded",
       status: 200,
+      id: stickers[0]?.id,
     });
   }
 };

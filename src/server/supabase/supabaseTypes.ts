@@ -47,23 +47,29 @@ export interface Database {
         Row: {
           created_at: string;
           id: string;
+          notified: boolean | null;
           result: string | null;
           status: string;
           stickerId: number | null;
+          type: string;
         };
         Insert: {
           created_at?: string;
           id: string;
+          notified?: boolean | null;
           result?: string | null;
           status: string;
           stickerId?: number | null;
+          type?: string;
         };
         Update: {
           created_at?: string;
           id?: string;
+          notified?: boolean | null;
           result?: string | null;
           status?: string;
           stickerId?: number | null;
+          type?: string;
         };
         Relationships: [
           {

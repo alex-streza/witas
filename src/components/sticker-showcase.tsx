@@ -56,20 +56,22 @@ export const StickerShowcase = ({
 
   return (
     <>
-      <div className="absolute left-0 top-0 z-20 w-full bg-gradient-to-b from-zinc-900 to-transparent p-5">
+      <div className="absolute left-0 top-0 z-20 w-full bg-gradient-to-b from-zinc-900 to-transparent p-5 pt-10 md:bg-none md:px-20">
         <Link href="/explore">
           <ArrowLeft size={32} />
         </Link>
-        <motion.h1 className="font-serif text-2xl">STICKER #{id}</motion.h1>
+        <motion.h1 className="font-serif text-4xl md:text-7xl">
+          STICKER #{id}
+        </motion.h1>
       </div>
       <Image
-        className="generated-image absolute left-0 top-0 aspect-square w-[576px]"
+        className="generated-image absolute left-0 top-0 aspect-square w-[576px] -translate-y-1/2 md:left-auto md:right-0 md:top-1/2 md:rounded-l-lg"
         src={imageUrl}
         alt=""
         width={512}
         height={512}
       />
-      <div className="mt-[100vw] flex flex-wrap gap-3">
+      <div className="mt-[100vw] flex flex-wrap gap-3 md:mt-40">
         {(colors ?? defaultColors)?.map((color) => (
           <button
             key={color.color}
@@ -83,7 +85,7 @@ export const StickerShowcase = ({
           </button>
         ))}
       </div>
-      <div className="my-5 flex flex-col gap-3">
+      <div className="my-5 flex max-w-sm flex-col gap-3">
         <Label htmlFor="prompt" className="font-serif text-xl">
           Prompt
         </Label>

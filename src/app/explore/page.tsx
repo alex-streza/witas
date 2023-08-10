@@ -7,7 +7,7 @@ export default async function Page() {
 
   return (
     <>
-      <h1 className="font-serif text-2xl">Explore</h1>
+      <h1 className="font-serif text-4xl">Explore</h1>
       <div className="mt-8 flex flex-wrap gap-5">
         {data?.map((sticker) => (
           <Link
@@ -19,7 +19,7 @@ export default async function Page() {
               #{sticker.id}
             </span>
             <img
-              className="h-40 w-40 rounded-lg"
+              className="h-40 w-40 rounded-lg md:h-[360px] md:w-[360px]"
               src={`${env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/raw/${sticker.id}.png`}
               alt={sticker?.prompt ?? ""}
             />

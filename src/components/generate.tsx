@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Brain, Info } from "@phosphor-icons/react";
+import { ArrowLeft, Brain, Info, SmileySticker } from "@phosphor-icons/react";
 import { useIntervalEffect, useLocalStorageValue } from "@react-hookz/web";
 import { useCompletion } from "ai/react";
 import { motion, useAnimate } from "framer-motion";
@@ -120,7 +120,7 @@ const Result = ({
       {splitImages && image && (
         <ImageSplitter imageUrl={image} stickerId={id} />
       )}
-      <motion.h1 className="relative mt-16 p-1.5 font-serif text-2xl">
+      <motion.h1 className="relative mt-16 p-1.5 font-serif text-4xl">
         <motion.span
           className="absolute -left-1 top-0 -z-10 h-full bg-zinc-500 bg-opacity-40"
           animate={{
@@ -164,7 +164,7 @@ const Result = ({
         </span>
       </div>
       <motion.div className="download-container z-20 mt-[calc(100vw)] flex w-full flex-col gap-5 opacity-0">
-        {/* <motion.h1 className="font-serif text-2xl">DOWNLOAD STICKERS</motion.h1> */}
+        {/* <motion.h1 className="font-serif text-4xl">DOWNLOAD STICKERS</motion.h1> */}
         {/* <div className="flex gap-5">
           <Button variant="secondary" className="w-full">
             <Download />
@@ -188,9 +188,10 @@ const Result = ({
           />
         </div>
         <div className="relative flex w-full justify-end">
-          <div className="rotate-12">
-            <CircleButton text="RESTART" onClick={() => setStep("PROMPT")} />
-          </div>
+          <Button className="w-full" onClick={() => setStep("PROMPT")}>
+            <SmileySticker />
+            Generate again
+          </Button>
         </div>
       </motion.div>
     </motion.div>
@@ -206,6 +207,39 @@ export interface Message {
   hasTag: boolean;
   progress?: string;
 }
+
+type Version =
+  | "v1"
+  | "v2"
+  | "v3"
+  | "v4"
+  | "v5"
+  | "v5.1"
+  | "v5.2"
+  | "niji 5"
+  | "niji 4";
+
+const versions: Version[] = [
+  "v1",
+  "v2",
+  "v3",
+  "v4",
+  "v5",
+  "v5.1",
+  "v5.2",
+  "niji 5",
+  "niji 4",
+];
+
+const styles = [
+  "cartoon",
+  "surrealist",
+  "cyberpunk",
+  "pastel",
+  "watercolor",
+  "modern",
+  "abstract",
+];
 
 export const Generate = ({ images }: { images: string[] }) => {
   const { set: setEnv, value: env } = useLocalStorageValue<{
@@ -224,17 +258,19 @@ export const Generate = ({ images }: { images: string[] }) => {
     },
   });
 
-  // const [loadingSettings, setLoadingSettings] = useState(true);
-  const [loadingSettings, setLoadingSettings] = useState(false);
+  const [loadingSettings, setLoadingSettings] = useState(true);
+  // const [loadingSettings, setLoadingSettings] = useState(false);
   const [stickerId, setStickerId] = useState<number>();
 
-  const [step, setStep] = useState<Step>("DONE");
+  const [step, setStep] = useState<Step>("TOKENS");
   const { value: email, set: setEmail } = useLocalStorageValue<string>(
     "email",
     {
       defaultValue: "",
     }
   );
+
+  const [version, setVersion] = useState<Version>("v5.2");
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [promptData, setPromptData] = useState<{
@@ -244,10 +280,10 @@ export const Generate = ({ images }: { images: string[] }) => {
     prompt: "",
     subject: "",
   });
-  // const [completedImage, setCompletedImage] = useState<string>();
-  const [completedImage, setCompletedImage] = useState<string>(
-    "https://cdn.discordapp.com/attachments/1087721443980230766/1137470431016792114/astre9_a_sticker_image_of_a_cute_couple_in_desertpunk_style_wit_c0072b57-dd05-4df4-ad0a-d662a45ee7c2.png"
-  );
+  const [completedImage, setCompletedImage] = useState<string>();
+  // const [completedImage, setCompletedImage] = useState<string>(
+  //   "https://cdn.discordapp.com/attachments/1087721443980230766/1137470431016792114/astre9_a_sticker_image_of_a_cute_couple_in_desertpunk_style_wit_c0072b57-dd05-4df4-ad0a-d662a45ee7c2.png"
+  // );
 
   const { completion, input, handleInputChange, handleSubmit, isLoading } =
     useCompletion({
@@ -331,12 +367,12 @@ export const Generate = ({ images }: { images: string[] }) => {
   };
 
   useEffect(() => {
-    // if (typeof window !== "undefined") {
-    //   if (env?.authorization && env?.channelId && env?.serverId) {
-    //     setStep("PROMPT");
-    //   }
-    //   setLoadingSettings(false);
-    // }
+    if (typeof window !== "undefined") {
+      if (env?.authorization && env?.channelId && env?.serverId) {
+        setStep("PROMPT");
+      }
+      setLoadingSettings(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -351,10 +387,14 @@ export const Generate = ({ images }: { images: string[] }) => {
     if (completion !== "")
       setPromptData((prev) => ({
         ...prev,
-        // prompt: completion + " --ar 1:1 --niji 5 --q 2 --s 750",
-        prompt: completion + " --ar 1:1",
+        prompt: `${completion}, ${
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          styles[Math.floor(Math.random() * styles.length)]
+        } --ar 1:1 ${
+          version.includes("niji") ? `--${version}` : `--v ${version}`
+        } --q 2 --s 750`,
       }));
-  }, [completion]);
+  }, [completion, version]);
 
   return (
     <>
@@ -365,53 +405,54 @@ export const Generate = ({ images }: { images: string[] }) => {
       )}
       {!loadingSettings && step === "TOKENS" && (
         <>
-          <h1 className="font-serif text-2xl">Enter tokens</h1>
-          <p className="mt-3 text-sm text-zinc-300">
-            You&apos;ll be asked to enter the following: Radjourney related:
-            channel id, server id and discord token
-            <br />
-            Upscale/crop images: Replicate API Token
-            <br />
-            <br />
-            If no tokens are entered the generations may be underwhelming since
-            the images will be generated with DALL-e-2
-          </p>
-          <h2 className="mt-5 font-serif text-xl">RADJOURNEY STUFF</h2>
-          <p className="mt-2 text-sm text-zinc-300">
-            To get those values follow this guide (requires logging into Discord
-            from browser)
-          </p>
-          <div className="mt-5">
-            <div className="mb-5 flex flex-col gap-3">
-              <Label htmlFor="serverId">Server ID</Label>
-              <Input
-                name="serverId"
-                placeholder="Paste server_id"
-                value={env?.serverId}
-                onChange={handleChange}
-              />
+          <div className="max-w-lg">
+            <h1 className="font-serif text-4xl">Enter tokens</h1>
+            <p className="mt-3 text-sm text-zinc-300">
+              You&apos;ll be asked to enter the following: Radjourney related:
+              channel id, server id and discord token
+              <br />
+              Upscale/crop images: Replicate API Token
+              <br />
+              <br />
+              If no tokens are entered the generations may be underwhelming
+              since the images will be generated with DALL-e-2
+            </p>
+            <h2 className="mt-5 font-serif text-xl">RADJOURNEY STUFF</h2>
+            <p className="mt-2 text-sm text-zinc-300">
+              To get those values follow this guide (requires logging into
+              Discord from browser)
+            </p>
+            <div className="mt-5">
+              <div className="mb-5 flex flex-col gap-3">
+                <Label htmlFor="serverId">Server ID</Label>
+                <Input
+                  name="serverId"
+                  placeholder="Paste server_id"
+                  value={env?.serverId}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-5 flex flex-col gap-3">
+                <Label htmlFor="channelId">Channel ID</Label>
+                <Input
+                  name="channelId"
+                  placeholder="Paste channel_id"
+                  value={env?.channelId}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-5 flex flex-col gap-3">
+                <Label htmlFor="authorization">Authorization</Label>
+                <Input
+                  name="authorization"
+                  placeholder="Paste authorization"
+                  value={env?.authorization}
+                  onChange={handleChange}
+                  type="password"
+                />
+              </div>
             </div>
-            <div className="mb-5 flex flex-col gap-3">
-              <Label htmlFor="channelId">Channel ID</Label>
-              <Input
-                name="channelId"
-                placeholder="Paste channel_id"
-                value={env?.channelId}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="mb-5 flex flex-col gap-3">
-              <Label htmlFor="authorization">Authorization</Label>
-              <Input
-                name="authorization"
-                placeholder="Paste authorization"
-                value={env?.authorization}
-                onChange={handleChange}
-                type="password"
-              />
-            </div>
-          </div>
-          <h2 className="mt-5 font-serif text-xl">REPLICATE API</h2>
+            {/* <h2 className="mt-5 font-serif text-xl">REPLICATE API</h2>
           <p className="mt-2 text-sm text-zinc-300">authorization</p>
           <div className="mt-5">
             <div className="mb-5 flex flex-col gap-3">
@@ -423,6 +464,7 @@ export const Generate = ({ images }: { images: string[] }) => {
                 onChange={handleChange}
               />
             </div>
+          </div> */}
           </div>
           <div className="flex w-full justify-end">
             <div className="rotate-12">
@@ -433,71 +475,88 @@ export const Generate = ({ images }: { images: string[] }) => {
       )}
       {!loadingSettings && step === "PROMPT" && (
         <>
-          <button onClick={() => setStep("TOKENS")}>
-            <ArrowLeft size={32} />
-          </button>
-          <h1 className="font-serif text-2xl">Generate prompt</h1>
-          <p className="mt-3 text-sm text-zinc-300">
-            Generate the perfect prompt for your Rad sticker design or customize
-            it to your prompt engineering likings.
-          </p>
-          <div className="mt-5">
-            <form className="mb-5 flex flex-col gap-3" onSubmit={handleSubmit}>
-              <Label htmlFor="email" className="font-serif text-xl">
-                Your e-mail
-              </Label>
-              <Input
-                name="email"
-                placeholder="E-mail to receive optimized stickers"
-                onChange={(ev) => setEmail(ev.target.value)}
-                value={email}
-              />
-              <Label htmlFor="subject" className="font-serif text-xl">
-                stickers Subject
-              </Label>
-              <Input
-                name="subject"
-                placeholder="arry potte'"
-                onChange={handleInputChange}
-                value={input}
-              />
-              <Button
-                variant="secondary"
-                type="submit"
-                disabled={input === "" || isLoading}
+          <div className="max-w-xl">
+            <button onClick={() => setStep("TOKENS")}>
+              <ArrowLeft size={32} />
+            </button>
+            <h1 className="font-serif text-4xl">Generate prompt</h1>
+            <p className="mt-3 text-sm text-zinc-300">
+              Generate the perfect prompt for your Rad sticker design or
+              customize it to your prompt engineering likings.
+            </p>
+            <div className="mt-5">
+              <form
+                className="mb-5 flex flex-col gap-3"
+                onSubmit={handleSubmit}
               >
-                {isLoading && <Spinner />}
-                {!isLoading && (
-                  <>
-                    <Brain />
-                    <span>Generate prompt</span>
-                  </>
-                )}
-              </Button>
-            </form>
-            <div className="mb-5 flex flex-col gap-3">
-              <Label htmlFor="prompt" className="font-serif text-xl">
-                Prompt
-              </Label>
-              <Textarea
-                name="prompt"
-                placeholder="A sticker of a cute Superman character, chibi-style anime character — ar 1:1 — niji 5 — s 180 --q 2 --s 750"
-                value={promptData.prompt}
-                onChange={(event) =>
-                  setPromptData({
-                    ...promptData,
-                    prompt: event.target.value,
-                  })
-                }
-              />
-              <span className="flex items-center gap-1 text-sm text-zinc-500">
-                <Info />
-                <span>
-                  {!env?.authorization || !env?.channelId || !env?.serverId
-                    ? "Defaulting to DALL-E-2"
-                    : "Using Midjourney"}
+                <Label htmlFor="email" className="font-serif text-xl">
+                  Your e-mail
+                </Label>
+                <Input
+                  name="email"
+                  placeholder="E-mail to receive optimized stickers"
+                  onChange={(ev) => setEmail(ev.target.value)}
+                  value={email}
+                />
+                <Label htmlFor="subject" className="font-serif text-xl">
+                  stickers Subject
+                </Label>
+                <Input
+                  name="subject"
+                  placeholder="arry potte'"
+                  onChange={handleInputChange}
+                  value={input}
+                />
+                <Button
+                  variant="secondary"
+                  type="submit"
+                  disabled={input === "" || isLoading}
+                >
+                  {isLoading && <Spinner />}
+                  {!isLoading && (
+                    <>
+                      <Brain />
+                      <span>Generate prompt</span>
+                    </>
+                  )}
+                </Button>
+                <div className="flex flex-wrap gap-2">
+                  {versions.map((v) => (
+                    <Button
+                      key={v}
+                      variant={version === v ? "default" : "secondary"}
+                      onClick={() => setVersion(v)}
+                      type="button"
+                    >
+                      {v}
+                    </Button>
+                  ))}
+                </div>
+              </form>
+              <div className="mb-5 flex flex-col gap-3">
+                <Label htmlFor="prompt" className="font-serif text-xl">
+                  Prompt
+                </Label>
+                <Textarea
+                  name="prompt"
+                  placeholder="A sticker of a cute Superman character, chibi-style anime character — ar 1:1 — niji 5 — s 180 --q 2 --s 750"
+                  value={promptData.prompt}
+                  onChange={(event) =>
+                    setPromptData({
+                      ...promptData,
+                      prompt: event.target.value,
+                    })
+                  }
+                />
+                <span className="flex items-center gap-1 text-sm text-zinc-500">
+                  <Info />
+                  <span>
+                    {!env?.authorization || !env?.channelId || !env?.serverId
+                      ? "Defaulting to DALL-E-2"
+                      : "Using Midjourney"}
+                  </span>
                 </span>
-              </span>
+              </div>
             </div>
           </div>
           <div className="flex w-full justify-end">

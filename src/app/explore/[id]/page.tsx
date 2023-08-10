@@ -19,10 +19,10 @@ export default async function Page({ params }: { params: { id: string } }) {
           colors={sticker.colors ?? []}
         />
       )}
-      <div className="mt-auto flex w-full justify-end">
+      <div className="mt-auto flex w-full justify-end md:justify-start">
         <div className="rotate-12">
           <Link href="/generate">
-            <CircleButton text="RESTART" />
+            <CircleButton text="GENERATE" />
           </Link>
         </div>
       </div>
