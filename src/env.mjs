@@ -18,6 +18,7 @@ export const env = createEnv({
     CHANNEL_ID: z.string().min(1).optional(),
     SALAI_TOKEN: z.string().min(1).optional(),
     HUGGINGFACE_TOKEN: z.string().min(1).optional(),
+    RESEND_API_KEY: z.string().min(1).optional(),
   },
 
   /**
@@ -52,5 +53,6 @@ export const env = createEnv({
     HUGGINGFACE_TOKEN: process.env.HUGGINGFACE_TOKEN,
     WS: process.env.WS,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
   },
 });
