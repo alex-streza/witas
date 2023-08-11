@@ -9,18 +9,18 @@ export const config = {
 };
 
 const handler = async (req: Request) => {
-  const { prompt, serverId, channelId, salaiToken } = (await req.json()) as {
+  const { prompt, serverId, channelId, authorization } = (await req.json()) as {
     prompt: string;
     serverId: string;
     channelId: string;
-    salaiToken: string;
+    authorization: string;
   };
 
-  console.log("imagine.handler", prompt, serverId, channelId, salaiToken);
+  console.log("imagine.handler", prompt, serverId, channelId, authorization);
   const client = new Midjourney({
     ServerId: serverId ?? process.env.SERVER_ID,
     ChannelId: channelId ?? process.env.CHANNEL_ID,
-    SalaiToken: salaiToken ?? process.env.SALAI_TOKEN,
+    SalaiToken: authorization ?? process.env.SALAI_TOKEN,
     HuggingFaceToken: process.env.HUGGINGFACE_TOKEN,
     Ws: process.env.WS === "true",
     Debug: true,
