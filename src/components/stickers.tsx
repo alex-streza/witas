@@ -6,6 +6,8 @@ import {
   WigglySticker,
 } from "~/components/sticker";
 import { Parallax } from "./animation/parallax";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const StickerScene = () => {
   return (
@@ -30,6 +32,87 @@ export const StickerScene = () => {
           <SpikySticker text="completely AI generated" />
         </Parallax>
       </div>
+    </>
+  );
+};
+
+const baseUrl =
+  "https://eiuckazvagocqjiisium.supabase.co/storage/v1/object/public/optimized";
+const urls = [
+  `${baseUrl}/40_v212.png`,
+  `${baseUrl}/40_v7451.png`,
+  `${baseUrl}/40_v6999.png`,
+  `${baseUrl}/38.png`,
+];
+
+export const ClickStickers = () => {
+  const [stickers, setStickers] = useState<
+    {
+      x: number;
+      y: number;
+      rotate: number;
+      url: string;
+      zIndex: number;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (stickers.length > 3)
+        setStickers((prev) => [
+          ...prev.slice(1),
+          {
+            x: e.clientX - 80,
+            y: e.clientY - 80,
+            url: urls[Math.floor(Math.random() * 4)] as string,
+            rotate: Math.random() * 360,
+            zIndex: prev[prev.length - 1].zIndex + 1,
+          },
+        ]);
+      else
+        setStickers((prev) => [
+          ...prev,
+          {
+            x: e.clientX - 80,
+            y: e.clientY - 80,
+            url: urls[Math.floor(Math.random() * 4)] as string,
+            rotate: Math.random() * 360,
+            zIndex: (prev[prev.length - 1]?.zIndex || 0) + 1 || 1,
+          },
+        ]);
+    };
+
+    window.addEventListener("click", onClick);
+
+    return () => window.removeEventListener("click", onClick);
+  }, [stickers.length]);
+
+  return (
+    <>
+      <AnimatePresence>
+        {stickers.map(({ x, y, url, zIndex }, i) => (
+          <motion.div
+            key={`${x}-${y}`}
+            className="fixed h-40 w-40 -translate-x-1/2 -translate-y-1/2 scale-0 transform rounded-full opacity-0 md:h-64 md:w-64"
+            style={{ left: x, top: y, zIndex }}
+            animate={{
+              opacity: 1,
+              scale: 1.1,
+            }}
+            exit={{ opacity: 0, scale: 0 }}
+          >
+            <Parallax>
+              <img
+                style={{
+                  transform: `rotate(${stickers[i].rotate}deg)`,
+                }}
+                src={url}
+                alt="sticker"
+              />
+            </Parallax>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </>
   );
 };

@@ -6,6 +6,10 @@ h1 {
   @apply font-serif;
 }
 
+body {
+  @apply overflow-hidden;
+}
+
 body > * {
   @apply font-sans text-white;
 }
