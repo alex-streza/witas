@@ -3,8 +3,9 @@
 import { ArrowLeft, Brain, Info, SmileySticker } from "@phosphor-icons/react";
 import { useIntervalEffect, useLocalStorageValue } from "@react-hookz/web";
 import { useCompletion } from "ai/react";
-import { motion, useAnimate } from "framer-motion";
+import { color, motion, useAnimate } from "framer-motion";
 import type { MJMessage } from "midjourney";
+import Link from "next/link";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { compressImage, fileToBase64, urltoFile } from "~/utils/images";
 import { Imagine } from "~/utils/midjourney";
@@ -15,6 +16,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 type Step = "TOKENS" | "PROMPT" | "LOADING" | "DONE";
 
@@ -405,16 +412,45 @@ export const Generate = ({ images }: { images: string[] }) => {
           <div className="max-w-lg">
             <h1 className="font-serif text-2xl md:text-4xl">Enter tokens</h1>
             <p className="mt-3 text-sm text-zinc-300">
-              You&apos;ll be asked to enter the following: Radjourney related:
-              channel id, server id and discord token
-              <br />
-              Upscale/crop images: Replicate API Token
+              You&apos;ll be asked to enter the following Midjourney related:{" "}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger className="text-green">
+                    server id and channel id
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-[400px] font-sans text-sm">
+                      How to get server and channel ids:
+                      <br />
+                      1. when you click on a channel in your server in the
+                      browser
+                      <br />
+                      2. expect to have the following URL pattern:
+                      <br />
+                      <br />
+                      <span className="italic">
+                        https://discord.com/channels/server_id/channel_id
+                      </span>
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              and{" "}
+              <Link
+                href="https://www.androidauthority.com/get-discord-token-3149920/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline underline"
+              >
+                discord token
+              </Link>
+              .
               <br />
               <br />
               If no tokens are entered the generations may be underwhelming
               since the images will be generated with DALL-e-2
             </p>
-            <h2 className="mt-5 font-serif text-xl">RADJOURNEY STUFF</h2>
+            <h2 className="mt-5 font-serif text-xl">MidjouRNEY STUFF</h2>
             <p className="mt-2 text-sm text-zinc-300">
               To get those values follow this guide (requires logging into
               Discord from browser)

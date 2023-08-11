@@ -1,6 +1,5 @@
 import {
   Body,
-  Button,
   Column,
   Container,
   Head,
@@ -10,7 +9,6 @@ import {
   Link,
   Preview,
   Row,
-  Section,
   Tailwind,
   Text,
 } from "@react-email/components";
@@ -20,16 +18,12 @@ interface NotifyEmailProps {
   images: string[];
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "";
+const imageUrl = `${env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/optimized`;
 
 export const NotifyEmail = ({ images }: NotifyEmailProps) => {
   const previewText = `WITAS ${images.length} sticker${
     images.length > 1 ? "s" : ""
   } generated`;
-
-  const imageUrl = `${env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/optimized`;
 
   const imagesGrouped = images.reduce<string[][]>(
     (acc, image, index) => {

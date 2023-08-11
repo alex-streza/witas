@@ -16,7 +16,7 @@ export const ImageSplitter = ({
   imageUrl: string;
   stickerId: number;
 }) => {
-  const [optimizedIndexes, setOptimizedIndexes] = useState<number[]>([3]);
+  const [optimizedIndexes, setOptimizedIndexes] = useState<number[]>([]);
   const [loadingIndexes, setLoadingIndexes] = useState<number[]>([]);
 
   const [base64Images, setBase64Images] = useState<string[]>([]);
@@ -129,16 +129,6 @@ export const ImageSplitter = ({
 
     setLoadingIndexes(loadingIndexes.filter((i) => i !== index));
     setOptimizedIndexes([...optimizedIndexes, index]);
-    // const { uri: optimizedUri } = (await res.json()) as { uri: string };
-
-    // if (!optimizedUri) return;
-
-    // const downloadLink = document.createElement("a");
-    // downloadLink.href = await urlToBase64(optimizedUri);
-    // downloadLink.download = `sticker_v${index}.png`;
-    // document.body.appendChild(downloadLink);
-    // downloadLink.click();
-    // document.body.removeChild(downloadLink);
   };
 
   const handleDownloadRaw = async (base64Image: string, index: number) => {
