@@ -38,12 +38,17 @@ export const StickerScene = () => {
 
 const baseUrl =
   "https://eiuckazvagocqjiisium.supabase.co/storage/v1/object/public/optimized";
-const urls = [
-  `${baseUrl}/40_v212.png`,
-  `${baseUrl}/40_v7451.png`,
-  `${baseUrl}/40_v6999.png`,
-  `${baseUrl}/38.png`,
-];
+
+const urls = Array.from({ length: 42 }).map(
+  (_, i) => `${baseUrl}/p (${i + 1}).png`
+);
+
+// const urls = [
+//   `${baseUrl}/40_v212.png`,
+//   `${baseUrl}/40_v7451.png`,
+//   `${baseUrl}/40_v6999.png`,
+//   `${baseUrl}/38.png`,
+// ];
 
 export const ClickStickers = () => {
   const [stickers, setStickers] = useState<
@@ -64,7 +69,7 @@ export const ClickStickers = () => {
           {
             x: e.clientX - 80,
             y: e.clientY - 80,
-            url: urls[Math.floor(Math.random() * 4)] as string,
+            url: urls[Math.floor(Math.random() * 42)] as string,
             rotate: Math.random() * 360,
             zIndex: prev[prev.length - 1].zIndex + 1,
           },
@@ -75,7 +80,7 @@ export const ClickStickers = () => {
           {
             x: e.clientX - 80,
             y: e.clientY - 80,
-            url: urls[Math.floor(Math.random() * 4)] as string,
+            url: urls[Math.floor(Math.random() * 42)] as string,
             rotate: Math.random() * 360,
             zIndex: (prev[prev.length - 1]?.zIndex || 0) + 1 || 1,
           },
