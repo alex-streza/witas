@@ -63,7 +63,7 @@ export const ClickStickers = () => {
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (stickers.length > 3)
+      if (stickers.length > 8)
         setStickers((prev) => [
           ...prev.slice(1),
           {
@@ -91,6 +91,32 @@ export const ClickStickers = () => {
 
     return () => window.removeEventListener("click", onClick);
   }, [stickers.length]);
+
+  useEffect(() => {
+    const imagePromises = urls.map((url) => {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.src = url;
+        image.onload = resolve;
+        image.onerror = reject;
+      });
+    });
+
+    Promise.all(imagePromises)
+      .then(() => {
+        console.log("Images preloaded successfully");
+      })
+      .catch((error) => {
+        console.error("Error preloading images:", error);
+      });
+
+    return () => {
+      // Clean up if needed
+      imagePromises.forEach((promise) => {
+        promise.catch(() => {}); // Avoid unhandled promise rejection warnings
+      });
+    };
+  }, []);
 
   return (
     <>
