@@ -49,7 +49,7 @@ const Result = ({
   progress = "0%",
   setStep,
 }: {
-  id: number;
+  id?: number;
   prompt: string;
   images: string[];
   setStep: (step: Step) => void;
@@ -117,10 +117,10 @@ const Result = ({
       ref={scope}
       className="flex h-full flex-col items-center justify-between"
     >
-      {splitImages && image && (
+      {splitImages && image && id && (
         <ImageSplitter imageUrl={image} stickerId={id} />
       )}
-      <motion.h1 className="relative mt-16 p-1.5 font-serif text-4xl">
+      <motion.h1 className="relative mt-16 p-1.5 font-serif text-2xl">
         <motion.span
           className="absolute -left-1 top-0 -z-10 h-full bg-zinc-500 bg-opacity-40"
           animate={{
@@ -134,13 +134,13 @@ const Result = ({
         Generating #xxx
       </motion.h1>
       <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <motion.div className="img-container relative mb-3 aspect-square w-60 overflow-hidden border border-zinc-200">
+        <motion.div className="img-container relative mb-3 aspect-square w-full max-w-lg overflow-hidden border border-zinc-200">
           <motion.img
-            className="generated-image absolute inset-0 aspect-square w-[576px] opacity-0"
+            className="generated-image absolute inset-0 aspect-square w-full max-w-lg opacity-0"
             src={image}
           />
           <motion.div
-            className="loading-grid absolute inset-0 grid w-[576px] grid-cols-3"
+            className="loading-grid absolute inset-0 grid w-full max-w-lg grid-cols-3"
             initial={{ x: 0, y: 0 }}
           >
             {images.slice(0, 9).map((image) => (
@@ -157,7 +157,7 @@ const Result = ({
           {prompt}
         </p>
       </div>
-      <div className="info-container mt-auto flex max-w-[200px] items-start gap-2 text-xs text-zinc-400">
+      <div className="info-container absolute bottom-12 left-1/2 flex w-[200px] -translate-x-1/2 items-start gap-2 text-xs text-zinc-400">
         <Info size={24} />
         <span>
           Using Midjourney, generation may take up to a minute so be patient
@@ -175,7 +175,7 @@ const Result = ({
             Share
           </Button>
         </div> */}
-        <div className="mb-5 flex flex-col gap-3">
+        <div className="mb-3 flex flex-col gap-3">
           <Label htmlFor="prompt" className="font-serif text-xl">
             Prompt
           </Label>
@@ -193,6 +193,13 @@ const Result = ({
             Generate again
           </Button>
         </div>
+        <div className="mt-2 flex w-full max-w-[360px] items-start gap-2 text-xs text-zinc-400">
+          <Info size={24} />
+          <span>
+            You&apos;ll get an e-mail with all optimized stickers (upscaled and
+            with background removed) every ~10 minutes.
+          </span>
+        </div>
       </motion.div>
     </motion.div>
   );
@@ -209,27 +216,17 @@ export interface Message {
 }
 
 type Version =
-  | "v1"
-  | "v2"
-  | "v3"
-  | "v4"
-  | "v5"
-  | "v5.1"
-  | "v5.2"
+  | "1"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "5.1"
+  | "5.2"
   | "niji 5"
   | "niji 4";
 
-const versions: Version[] = [
-  "v1",
-  "v2",
-  "v3",
-  "v4",
-  "v5",
-  "v5.1",
-  "v5.2",
-  "niji 5",
-  "niji 4",
-];
+const versions: Version[] = ["5.2", "5.1", "5", "4", "niji 5", "niji 4"];
 
 const styles = [
   "cartoon",
@@ -270,7 +267,7 @@ export const Generate = ({ images }: { images: string[] }) => {
     }
   );
 
-  const [version, setVersion] = useState<Version>("v5.2");
+  const [version, setVersion] = useState<Version>("5.2");
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [promptData, setPromptData] = useState<{
@@ -406,7 +403,7 @@ export const Generate = ({ images }: { images: string[] }) => {
       {!loadingSettings && step === "TOKENS" && (
         <>
           <div className="max-w-lg">
-            <h1 className="font-serif text-4xl">Enter tokens</h1>
+            <h1 className="font-serif text-2xl md:text-4xl">Enter tokens</h1>
             <p className="mt-3 text-sm text-zinc-300">
               You&apos;ll be asked to enter the following: Radjourney related:
               channel id, server id and discord token
@@ -479,7 +476,7 @@ export const Generate = ({ images }: { images: string[] }) => {
             <button onClick={() => setStep("TOKENS")}>
               <ArrowLeft size={32} />
             </button>
-            <h1 className="font-serif text-4xl">Generate prompt</h1>
+            <h1 className="font-serif text-2xl md:text-4xl">Generate prompt</h1>
             <p className="mt-3 text-sm text-zinc-300">
               Generate the perfect prompt for your Rad sticker design or
               customize it to your prompt engineering likings.
@@ -498,7 +495,15 @@ export const Generate = ({ images }: { images: string[] }) => {
                   onChange={(ev) => setEmail(ev.target.value)}
                   value={email}
                 />
-                <Label htmlFor="subject" className="font-serif text-xl">
+
+                <div className="flex items-start gap-2 text-xs text-zinc-400">
+                  <Info size={24} />
+                  <span>
+                    We need your e-mail to send you optimized stickers (upscaled
+                    and with background removed){" "}
+                  </span>
+                </div>
+                <Label htmlFor="subject" className="mt-3 font-serif text-xl">
                   stickers Subject
                 </Label>
                 <Input

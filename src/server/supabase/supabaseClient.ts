@@ -35,5 +35,6 @@ export const getUserAsAdmin = async (token: string) => {
 };
 
 export const storageBucketsNames = {
-  portfolioFiles: "portfolio-files",
+  raw: "raw",
+  optimized: "optimized",
 };

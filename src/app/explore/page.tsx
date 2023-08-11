@@ -3,11 +3,11 @@ import { env } from "~/env.mjs";
 import { supabase } from "~/server/supabase/supabaseClient";
 
 export default async function Page() {
-  const { data } = await supabase().from("stickers").select("*").limit(1000);
-
+  const { data } = await supabase().from("stickers").select("*");
+  console.log("data", data);
   return (
     <>
-      <h1 className="font-serif text-4xl">Explore</h1>
+      <h1 className="font-serif text-2xl md:text-4xl">Explore</h1>
       <div className="mt-8 flex flex-wrap gap-5">
         {data?.map((sticker) => (
           <Link

@@ -8,7 +8,7 @@ export const Spinner = ({ className = "" }: { className?: string }) => {
       className={`h-6 w-6 animate-spin ${className}`}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_57_4735)">
+      <g clipPath="url(#clip0_57_4735)">
         <path
           fill-rule="evenodd"
           clip-rule="evenodd"

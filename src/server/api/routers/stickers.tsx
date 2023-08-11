@@ -6,10 +6,13 @@ import {
   defaultOutputSchema,
   replicateWebhookInputSchema,
 } from "~/utils/schema";
+import { Resend } from "resend";
+import { env } from "~/env.mjs";
+import { NotifyEmail } from "~/components/emails/notify";
 
 const WEBHOOK_URL = `${
   process.env.VERCEL_URL ??
-  "https://5ff6-2a02-2f04-e500-9d00-6a8a-20ab-a6b8-2086.ngrok.io"
+  "https://ed70-2a02-2f04-e506-2900-ecdb-6385-e5b1-e217.ngrok.io"
 }/api/webhooks/replicate`;
 
 export const stickersRouter = createTRPCRouter({
@@ -33,7 +36,7 @@ export const stickersRouter = createTRPCRouter({
       void ctx.replicate.run(modelUpscale, {
         input: {
           ...input,
-          scale: 1.1,
+          scale: 8,
         },
         webhook: `${WEBHOOK_URL}?stickerId=${input.stickerId}&type=upscale`,
         webhook_events_filter: ["completed"],
@@ -85,25 +88,29 @@ export const stickersRouter = createTRPCRouter({
             message: "Replicate webhook received",
           };
 
-        await ctx.supabase.from("replicate_jobs").insert([
-          {
-            id: input.id,
-            status: input.status,
-            result: input.output,
-            stickerId: Number(stickerId),
-            type,
-          },
-        ]);
-
         const response = await fetch(input.output);
         const blob = await response.blob();
         const arrayBuffer = await blob.arrayBuffer();
 
-        const { data, error } = await ctx.supabase.storage
+        const fileName = `${stickerId}_v${Math.floor(
+          Math.random() * 10000
+        )}.png`;
+
+        await ctx.supabase.storage
           .from("optimized")
-          .upload(`${stickerId ?? Math.random() * 10000}.png`, arrayBuffer, {
+          .upload(fileName, arrayBuffer, {
             contentType: "image/png",
           });
+
+        await ctx.supabase.from("replicate_jobs").insert([
+          {
+            id: input.id,
+            status: input.status,
+            result: fileName,
+            stickerId: Number(stickerId),
+            type,
+          },
+        ]);
       }
 
       return {
@@ -175,32 +182,53 @@ export const stickersRouter = createTRPCRouter({
         .like("status", "succeeded")
         .like("type", "rembg");
 
-      const jobsGroupedByUser = jobs?.reduce(
-        (
-          acc: {
-            [key: string]: typeof jobs;
+      const jobsGroupedByUser =
+        jobs?.reduce(
+          (
+            acc: {
+              [key: string]: typeof jobs;
+            },
+            job
+          ) => {
+            const user = job.stickers?.users;
+
+            if (!user) return acc;
+
+            const email = user.email as keyof typeof acc;
+
+            if (!acc[email]) {
+              acc[email] = [];
+            }
+
+            acc[email]?.push(job);
+
+            return acc;
           },
-          job
-        ) => {
-          const user = job.stickers?.users;
+          {}
+        ) ?? {};
 
-          if (!user) return acc;
+      const resend = new Resend(env.RESEND_API_KEY);
 
-          const email = user.email as keyof typeof acc;
+      for (const [email, jobs] of Object.entries(jobsGroupedByUser)) {
+        try {
+          await resend.sendEmail({
+            from: "onboarding@resend.dev",
+            to: email,
+            subject: "WITAS - AI Stickers",
+            react: <NotifyEmail images={jobs.map((job) => job.result ?? "")} />,
+          });
 
-          if (!acc[email]) {
-            acc[email] = [];
-          }
-
-          acc[email]?.push(job);
-
-          return acc;
-        },
-        {}
-      );
-
-      console.log("jobsGroupedByUser", jobsGroupedByUser);
-
+          await ctx.supabase
+            .from("replicate_jobs")
+            .update({ notified: true })
+            .in(
+              "id",
+              jobs.map((job) => job.id)
+            );
+        } catch (error) {
+          console.log("error", error);
+        }
+      }
       return {
         status: 200,
         message: "Stickers notified",

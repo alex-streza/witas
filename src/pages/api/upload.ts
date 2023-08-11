@@ -32,7 +32,7 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     userId = users?.[0]?.id;
   }
-  console.log("prompt", prompt);
+
   if (!userId) {
     const { data } = await supabase()
       .from("users")
@@ -59,7 +59,7 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { data, error } = await supabase()
       .storage.from("raw")
       .upload(
-        `${stickers[0]?.id ?? Math.random() * 10000}.png`,
+        `${stickers[0]?.id ?? Math.floor(Math.random() * 10000)}.png`,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
         decode(image.replace("data:image/png;base64,", "")),
         {

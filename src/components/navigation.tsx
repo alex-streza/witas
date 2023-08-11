@@ -108,7 +108,7 @@ export const Navigation = () => {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <g clip-path="url(#clip0_144_77)">
+                <g clipPath="url(#clip0_144_77)">
                   <path
                     fill-rule="evenodd"
                     clip-rule="evenodd"
@@ -160,7 +160,7 @@ export const Navigation = () => {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <g clip-path="url(#clip0_144_85)">
+                  <g clipPath="url(#clip0_144_85)">
                     <path
                       fill-rule="evenodd"
                       clip-rule="evenodd"
@@ -191,7 +191,7 @@ export const Navigation = () => {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <g clip-path="url(#clip0_144_89)">
+                <g clipPath="url(#clip0_144_89)">
                   <path
                     fill-rule="evenodd"
                     clip-rule="evenodd"

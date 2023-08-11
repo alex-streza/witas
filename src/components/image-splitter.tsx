@@ -1,5 +1,5 @@
 "use client";
-import { Download, Envelope } from "@phosphor-icons/react";
+import { Download, Envelope, EnvelopeOpen } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import {
   compressImage,
@@ -16,6 +16,7 @@ export const ImageSplitter = ({
   imageUrl: string;
   stickerId: number;
 }) => {
+  const [optimizedIndexes, setOptimizedIndexes] = useState<number[]>([3]);
   const [loadingIndexes, setLoadingIndexes] = useState<number[]>([]);
 
   const [base64Images, setBase64Images] = useState<string[]>([]);
@@ -127,7 +128,7 @@ export const ImageSplitter = ({
     });
 
     setLoadingIndexes(loadingIndexes.filter((i) => i !== index));
-
+    setOptimizedIndexes([...optimizedIndexes, index]);
     // const { uri: optimizedUri } = (await res.json()) as { uri: string };
 
     // if (!optimizedUri) return;
@@ -158,7 +159,7 @@ export const ImageSplitter = ({
   };
 
   return (
-    <div className="absolute inset-0 z-20 aspect-square w-full">
+    <div className="absolute inset-0 z-20 aspect-square w-full max-w-md">
       <div className="grid h-full grid-cols-2">
         {canvasRefs.map((canvasRef, index) => (
           <div className="relative h-full w-full" key={index}>
@@ -170,13 +171,20 @@ export const ImageSplitter = ({
                   onClick={() =>
                     handleOptimize(base64Images[index] as string, index)
                   }
+                  className="transition-all duration-200 disabled:rotate-6 disabled:text-zinc-400"
+                  disabled={optimizedIndexes.includes(index)}
                 >
                   {loadingIndexes.filter(
                     (loadingIndex) => loadingIndex === index
                   ).length > 0 && <Spinner />}
                   {loadingIndexes.filter(
                     (loadingIndex) => loadingIndex === index
-                  ).length == 0 && <Envelope size={32} />}
+                  ).length == 0 &&
+                    (optimizedIndexes.includes(index) ? (
+                      <EnvelopeOpen size={32} />
+                    ) : (
+                      <Envelope size={32} />
+                    ))}
                 </button>
                 <button
                   // eslint-disable-next-line @typescript-eslint/no-misused-promises

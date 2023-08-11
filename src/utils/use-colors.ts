@@ -74,7 +74,7 @@ const getColorNames = async (topColors: TopColor[]) => {
   return data.colors.map((color) => color.name);
 };
 
-export const useColors = (imageUrl: string, hasColors: boolean) => {
+export const useColors = (imageUrl: string) => {
   const [colors, setColors] = useState<TopColor[]>([]);
 
   const getTopColorsFromImage = (imageUrl: string, topColorsCount = 8) => {
@@ -108,9 +108,9 @@ export const useColors = (imageUrl: string, hasColors: boolean) => {
         const g1 = imageData[i + 1] as number;
         const b1 = imageData[i + 2] as number;
 
-        const r = Math.round(r1 / 8) * 8;
-        const g = Math.round(g1 / 8) * 8;
-        const b = Math.round(b1 / 8) * 8;
+        const r = Math.round(r1 / 25) * 25;
+        const g = Math.round(g1 / 25) * 25;
+        const b = Math.round(b1 / 25) * 25;
         const color = `rgb(${r},${g},${b})`;
 
         if (colorCount[color]) {
@@ -157,8 +157,8 @@ export const useColors = (imageUrl: string, hasColors: boolean) => {
   };
 
   useEffect(() => {
-    if (!hasColors) getTopColorsFromImage(imageUrl);
-  }, [imageUrl, hasColors]);
+    getTopColorsFromImage(imageUrl);
+  }, [imageUrl]);
 
   return colors;
 };
