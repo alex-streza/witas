@@ -1,3 +1,5 @@
+![image](https://github.com/alex-streza/witas/assets/72100849/3c967493-e462-49ff-9f78-56b0326fbda1)
+
 ## Think/Imagine/Optimize
 
 WITAS isn't your run of the mill website, it's build for those who like a challenge, and love cute stickers.
