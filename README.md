@@ -69,11 +69,6 @@ About a month ago my GF and project sidekick had the idea to use Midjourney to g
 
 Then came Supabase Launch Week 8 Hackathon and I thought it would be a great opportunity to build something free & open-source with Supabase and Midjourney, since very few have done before.
 
-I wanted to do something hotdog related again (obviously), and initially this started as kind of a joke. Like something just for laughs.
-However once I started tinkering, I started having a lot of creative ideas which made this project turn into an art project (or sort of).
-
-I'm a fan of Neon Genesis Evangelion, so design has gotten some inspiration from it.
-
 ## Ideas for the future
 
 - Generate flow for desktop
@@ -91,3 +86,4 @@ I'm a fan of Neon Genesis Evangelion, so design has gotten some inspiration from
 
 - [cata](https://twitter.com/Catalina_Melnic) for giving constant feedback, configuring Resend and working on color extraction and the galaxy scene
 - [erictik](https://github.com/erictik) for creating the foundation for communicating with [Midjourney](https://github.com/erictik/midjourney-ui) in Next.JS
+- [laznic](https://github.com/laznic) [generationhotdog](https://generationhotdog.com) was a huge inspiration for this project (including the README)
