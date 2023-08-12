@@ -1,29 +1,19 @@
 import { Generate } from "~/components/generate";
 import { supabase } from "~/server/supabase/supabaseClient";
 
-export default async function Page() {
-  const { count = 0 } = await supabase()
-    .from("stickers")
-    .select("id", { count: "exact" });
+const baseUrl =
+  "https://eiuckazvagocqjiisium.supabase.co/storage/v1/object/public/optimized";
 
-  const maxCount = count ?? 0;
+const images = Array.from({ length: 27 }).map(
+  (_, i) => `${baseUrl}/p (${i + 1}).png`
+);
 
-  const { data } = await supabase()
-    .from("stickers")
-    .select("*")
-    .range(Math.random() * maxCount, Math.random() * maxCount + maxCount)
-    .limit(9);
-
-  const images = Array.from({
-    length: 9,
-  }).map((_, i) => `https://source.unsplash.com/random/300×300?t=${i}`);
+export default function Page() {
+  const randomizedImages = images.sort(() => Math.random() - 0.5).slice(0, 9);
 
   return (
     <>
-      <Generate
-        // images={images}
-        images={(data ?? []).map((sticker) => sticker.url ?? "")}
-      />
+      <Generate images={randomizedImages} />
     </>
   );
 }

@@ -12,7 +12,7 @@ import { NotifyEmail } from "~/components/emails/notify";
 
 const WEBHOOK_URL = `${
   process.env.VERCEL_URL ??
-  "https://ed70-2a02-2f04-e506-2900-ecdb-6385-e5b1-e217.ngrok.io"
+  "https://1855-2a02-2f04-e506-2900-6651-c6e0-ed4b-14d4.ngrok.io"
 }/api/webhooks/replicate`;
 
 export const stickersRouter = createTRPCRouter({
@@ -212,7 +212,7 @@ export const stickersRouter = createTRPCRouter({
       for (const [email, jobs] of Object.entries(jobsGroupedByUser)) {
         try {
           await resend.sendEmail({
-            from: "onboarding@resend.dev",
+            from: "witas@morrow.to",
             to: email,
             subject: "WITAS - AI Stickers",
             react: <NotifyEmail images={jobs.map((job) => job.result ?? "")} />,

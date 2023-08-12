@@ -1,9 +1,20 @@
 "use client";
 
-import { ArrowLeft, Brain, Info, SmileySticker } from "@phosphor-icons/react";
-import { useIntervalEffect, useLocalStorageValue } from "@react-hookz/web";
+import {
+  ArrowLeft,
+  Brain,
+  Info,
+  SmileySad,
+  SmileySticker,
+  Warning,
+} from "@phosphor-icons/react";
+import {
+  useIntervalEffect,
+  useLocalStorageValue,
+  useMediaQuery,
+} from "@react-hookz/web";
 import { useCompletion } from "ai/react";
-import { color, motion, useAnimate } from "framer-motion";
+import { motion, useAnimate } from "framer-motion";
 import type { MJMessage } from "midjourney";
 import Link from "next/link";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
@@ -25,29 +36,6 @@ import {
 
 type Step = "TOKENS" | "PROMPT" | "LOADING" | "DONE";
 
-const positions = [
-  {
-    x: 0,
-    y: 0,
-    corner: "top-left",
-  },
-  {
-    x: 0,
-    y: "-332px",
-    corner: "top-right",
-  },
-  {
-    x: "-332px",
-    y: "-332px",
-    corner: "bottom-right",
-  },
-  {
-    x: "-332px",
-    y: 0,
-    corner: "bottom-left",
-  },
-];
-
 const Result = ({
   id,
   prompt,
@@ -67,6 +55,29 @@ const Result = ({
 
   const [scope, animate] = useAnimate();
   const [splitImages, setSplitImages] = useState(false);
+
+  const positions = [
+    {
+      x: 0,
+      y: 0,
+      corner: "top-left",
+    },
+    {
+      x: 0,
+      y: "-180px",
+      corner: "top-right",
+    },
+    {
+      x: "-180px",
+      y: "-180px",
+      corner: "bottom-right",
+    },
+    {
+      x: "-180px",
+      y: 0,
+      corner: "bottom-left",
+    },
+  ];
 
   useIntervalEffect(() => {
     if (image) {
@@ -102,9 +113,7 @@ const Result = ({
     } else {
       positionRef.current =
         positionRef.current === positions.length ? 0 : positionRef.current + 1;
-
       const position = positions[positionRef.current];
-
       void animate(
         ".grid",
         {
@@ -140,17 +149,17 @@ const Result = ({
         ></motion.span>
         Generating #xxx
       </motion.h1>
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <motion.div className="img-container relative mb-3 aspect-square w-full max-w-lg overflow-hidden border border-zinc-200">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 md:right-0 md:translate-x-0">
+        <motion.div className="img-container relative mb-3 aspect-square w-full overflow-hidden border border-zinc-200">
           <motion.img
-            className="generated-image absolute inset-0 aspect-square w-full max-w-lg opacity-0"
+            className="generated-image absolute inset-0 aspect-square w-full opacity-0"
             src={image}
           />
           <motion.div
-            className="loading-grid absolute inset-0 grid w-full max-w-lg grid-cols-3"
+            className="loading-grid absolute inset-0 grid w-[512px] grid-cols-3"
             initial={{ x: 0, y: 0 }}
           >
-            {images.slice(0, 9).map((image) => (
+            {images.map((image) => (
               <img
                 key={image}
                 src={image}
@@ -171,17 +180,6 @@ const Result = ({
         </span>
       </div>
       <motion.div className="download-container z-20 mt-[calc(100vw)] flex w-full flex-col gap-5 opacity-0">
-        {/* <motion.h1 className="font-serif text-4xl">DOWNLOAD STICKERS</motion.h1> */}
-        {/* <div className="flex gap-5">
-          <Button variant="secondary" className="w-full">
-            <Download />
-            Download all
-          </Button>
-          <Button className="w-full">
-            <Share />
-            Share
-          </Button>
-        </div> */}
         <div className="mb-3 flex flex-col gap-3">
           <Label htmlFor="prompt" className="font-serif text-xl">
             Prompt
@@ -247,11 +245,12 @@ const styles = [
 
 export const Generate = ({ images }: { images: string[] }) => {
   const { set: setEnv, value: env } = useLocalStorageValue<{
-    channelId: string;
-    serverId: string;
-    authorization: string;
-    replicateToken: string;
+    channelId?: string;
+    serverId?: string;
+    authorization?: string;
+    replicateToken?: string;
     subject?: string;
+    count: number;
   }>("env", {
     defaultValue: {
       channelId: "",
@@ -259,12 +258,14 @@ export const Generate = ({ images }: { images: string[] }) => {
       authorization: "",
       replicateToken: "",
       subject: "",
+      count: 0,
     },
   });
 
-  const [loadingSettings, setLoadingSettings] = useState(true);
-  // const [loadingSettings, setLoadingSettings] = useState(false);
+  // const [loadingSettings, setLoadingSettings] = useState(true);
+  const [loadingSettings, setLoadingSettings] = useState(false);
   const [stickerId, setStickerId] = useState<number>();
+  const isPhone = useMediaQuery("(max-width: 640px)");
 
   const [step, setStep] = useState<Step>("TOKENS");
   const { value: email, set: setEmail } = useLocalStorageValue<string>(
@@ -306,6 +307,7 @@ export const Generate = ({ images }: { images: string[] }) => {
       serverId: env?.serverId ?? "",
       authorization: env?.authorization ?? "",
       replicateToken: env?.replicateToken ?? "",
+      count: env?.count ?? 0,
       [name as keyof typeof env]: value,
     });
   };
@@ -333,6 +335,10 @@ export const Generate = ({ images }: { images: string[] }) => {
 
   const handleMessageSend = async () => {
     setStep("LOADING");
+    setEnv({
+      ...env,
+      count: (env?.count ?? 0) + 1,
+    });
 
     const newMessage: Message = {
       text: promptData.prompt.trim(),
@@ -344,9 +350,13 @@ export const Generate = ({ images }: { images: string[] }) => {
     if (newMessage.text) {
       const oldMessages = messages;
       setMessages([...oldMessages, newMessage]);
-
       await Imagine(
-        JSON.stringify({ prompt: newMessage.text }),
+        JSON.stringify({
+          prompt: newMessage.text,
+          serverId: env?.serverId,
+          channelId: env?.channelId,
+          authorization: env?.authorization,
+        }),
         (data: MJMessage) => {
           newMessage.img = data.uri;
           if (data.id) {
@@ -380,12 +390,18 @@ export const Generate = ({ images }: { images: string[] }) => {
   }, []);
 
   useEffect(() => {
-    const id = setTimeout(() => {
-      if (step === "LOADING") setCompletedImage(images[0]);
-    }, 2000);
+    if (step === "TOKENS" || step === "PROMPT") {
+      setCompletedImage(undefined);
+    }
+  }, [step]);
 
-    return () => clearTimeout(id);
-  }, [images, step]);
+  // useEffect(() => {
+  //   const id = setTimeout(() => {
+  //     if (step === "LOADING") setCompletedImage(images[0]);
+  //   }, 2000);
+
+  //   return () => clearTimeout(id);
+  // }, [images, step]);
 
   useEffect(() => {
     if (completion !== "")
@@ -399,6 +415,9 @@ export const Generate = ({ images }: { images: string[] }) => {
         } --q 2 --s 750`,
       }));
   }, [completion, version]);
+
+  const canGenerate =
+    (env?.authorization && env?.channelId && env?.serverId) || env?.count === 0;
 
   return (
     <>
@@ -434,7 +453,7 @@ export const Generate = ({ images }: { images: string[] }) => {
                     </p>
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
+              </TooltipProvider>{" "}
               and{" "}
               <Link
                 href="https://www.androidauthority.com/get-discord-token-3149920/"
@@ -447,8 +466,8 @@ export const Generate = ({ images }: { images: string[] }) => {
               .
               <br />
               <br />
-              If no tokens are entered the generations may be underwhelming
-              since the images will be generated with DALL-e-2
+              If no tokens are entered you&apos;ll be able to test generate a
+              single sticker.
             </p>
             <h2 className="mt-5 font-serif text-xl">MidjouRNEY STUFF</h2>
             <p className="mt-2 text-sm text-zinc-300">
@@ -551,7 +570,7 @@ export const Generate = ({ images }: { images: string[] }) => {
                 <Button
                   variant="secondary"
                   type="submit"
-                  disabled={input === "" || isLoading}
+                  disabled={input === "" || isLoading || !canGenerate}
                 >
                   {isLoading && <Spinner />}
                   {!isLoading && (
@@ -590,12 +609,29 @@ export const Generate = ({ images }: { images: string[] }) => {
                   }
                 />
                 <span className="flex items-center gap-1 text-sm text-zinc-500">
-                  <Info />
-                  <span>
-                    {!env?.authorization || !env?.channelId || !env?.serverId
-                      ? "Defaulting to DALL-E-2"
-                      : "Using Midjourney"}
-                  </span>
+                  {canGenerate ? (
+                    <>
+                      <Info />
+                      <span>
+                        {!env?.authorization ||
+                        !env?.channelId ||
+                        !env?.serverId
+                          ? "Test mode"
+                          : "Using Midjourney"}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Warning
+                        className="flex-shrink-0 text-yellow-600"
+                        size={20}
+                      />
+                      <span className="text-yellow-600">
+                        Youv&apos;e already used your test generation, enter
+                        your tokens on the previous step to continue.
+                      </span>
+                    </>
+                  )}
                 </span>
               </div>
             </div>
@@ -605,7 +641,7 @@ export const Generate = ({ images }: { images: string[] }) => {
               <CircleButton
                 text="GENERATE"
                 onClick={handleMessageSend}
-                disabled={promptData.prompt === ""}
+                disabled={promptData.prompt === "" || !canGenerate}
               />
             </div>
           </div>
@@ -621,6 +657,17 @@ export const Generate = ({ images }: { images: string[] }) => {
           id={stickerId}
         />
       )}
+      <div className="fixed inset-0 z-20 hidden h-screen w-screen place-content-center bg-zinc-900 md:grid">
+        <div className="flex flex-col gap-3">
+          <SmileySad size={48} />
+          <h1 className="max-w-lg font-sans text-3xl">
+            We are sorry but you must use your phone for generation.
+            <br />
+            <br />
+            Desktop support is coming soon.
+          </h1>
+        </div>
+      </div>
     </>
   );
 };

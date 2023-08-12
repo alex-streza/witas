@@ -39,7 +39,7 @@ export const StickerScene = () => {
 const baseUrl =
   "https://eiuckazvagocqjiisium.supabase.co/storage/v1/object/public/optimized";
 
-const urls = Array.from({ length: 42 }).map(
+const urls = Array.from({ length: 41 }).map(
   (_, i) => `${baseUrl}/p (${i + 1}).png`
 );
 
@@ -58,10 +58,19 @@ export const ClickStickers = () => {
       rotate: number;
       url: string;
       zIndex: number;
+      scale: number;
     }[]
   >([]);
 
   useEffect(() => {
+    const getRandomNonDuplicateUrl = (dupUrls: string[]) => {
+      const nonDuplicateURLs = urls.filter((url) => !dupUrls.includes(url));
+
+      return nonDuplicateURLs[
+        Math.floor(Math.random() * nonDuplicateURLs.length)
+      ];
+    };
+
     const onClick = (e: MouseEvent) => {
       if (stickers.length > 8)
         setStickers((prev) => [
@@ -69,9 +78,10 @@ export const ClickStickers = () => {
           {
             x: e.clientX - 80,
             y: e.clientY - 80,
-            url: urls[Math.floor(Math.random() * 42)] as string,
-            rotate: Math.random() * 360,
+            url: getRandomNonDuplicateUrl(stickers.map((s) => s.url)) as string,
+            rotate: Math.random() * 30 * (Math.random() > 0.5 ? -1 : 1),
             zIndex: prev[prev.length - 1].zIndex + 1,
+            scale: Math.random() * 0.5 + 0.5,
           },
         ]);
       else
@@ -80,9 +90,10 @@ export const ClickStickers = () => {
           {
             x: e.clientX - 80,
             y: e.clientY - 80,
-            url: urls[Math.floor(Math.random() * 42)] as string,
-            rotate: Math.random() * 360,
+            url: getRandomNonDuplicateUrl(stickers.map((s) => s.url)) as string,
+            rotate: Math.random() * 30 * (Math.random() > 0.5 ? -1 : 1),
             zIndex: (prev[prev.length - 1]?.zIndex || 0) + 1 || 1,
+            scale: Math.random() * 0.5 + 0.5,
           },
         ]);
     };
@@ -121,14 +132,14 @@ export const ClickStickers = () => {
   return (
     <>
       <AnimatePresence>
-        {stickers.map(({ x, y, url, zIndex }, i) => (
+        {stickers.map(({ x, y, url, zIndex, scale }, i) => (
           <motion.div
             key={`${x}-${y}`}
-            className="fixed h-40 w-40 -translate-x-1/2 -translate-y-1/2 scale-0 transform rounded-full opacity-0 md:h-64 md:w-64"
+            className="fixed h-32 w-32 -translate-x-1/2 -translate-y-1/2 scale-0 transform rounded-full opacity-0 md:h-64 md:w-64"
             style={{ left: x, top: y, zIndex }}
             animate={{
               opacity: 1,
-              scale: 1.1,
+              scale,
             }}
             exit={{ opacity: 0, scale: 0 }}
           >
