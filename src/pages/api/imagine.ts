@@ -17,11 +17,19 @@ const handler = async (req: Request) => {
     authorization: string;
   };
 
+  const SERVER_ID = !serverId || serverId === "" ? env.SERVER_ID : serverId;
+  const CHANNEL_ID =
+    !channelId || channelId === "" ? env.CHANNEL_ID : channelId;
+  const SALAI_TOKEN =
+    !authorization || authorization === ""
+      ? env.SALAI_TOKEN ?? ""
+      : authorization;
+
   console.log("imagine.handler", prompt, serverId, channelId, authorization);
   const client = new Midjourney({
-    ServerId: serverId ?? env.SERVER_ID,
-    ChannelId: channelId ?? env.CHANNEL_ID,
-    SalaiToken: authorization ?? env.SALAI_TOKEN,
+    ServerId: SERVER_ID,
+    ChannelId: CHANNEL_ID,
+    SalaiToken: SALAI_TOKEN,
     HuggingFaceToken: env.HUGGINGFACE_TOKEN,
     Ws: env.WS === "true",
     Debug: process.env.NODE_ENV === "development",
