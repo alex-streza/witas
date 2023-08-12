@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 
 export const metadata = {
   description:
-    "Unleash Creativity: Explore our AI-powered sticker emporium - a diverse collection of ready-to-sell stickers, crafted by cutting-edge technology",
+    "Generate outstanding stickers using AI and upscale and crop automatically for all your merchandise needs, all done in minutes.",
   canonical: "https://witas.vercel.app",
   title: "Wait is that a sticker?",
   openGraph: {
