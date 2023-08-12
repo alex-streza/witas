@@ -40,7 +40,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
           href="https://use.typekit.net/yjv8oem.css"
         ></link>
       </head>
-      <body className="relative h-screen w-screen overflow-x-hidden bg-zinc-900 p-5 scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-500 md:px-20 md:py-10">
+      <body className="relative h-screen w-screen overflow-y-auto overflow-x-hidden bg-zinc-900 p-5 scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-500 md:px-20 md:py-10">
         <Navigation />
         {children}
       </body>

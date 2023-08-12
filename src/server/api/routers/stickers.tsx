@@ -9,6 +9,7 @@ import {
 import { Resend } from "resend";
 import { env } from "~/env.mjs";
 import { NotifyEmail } from "~/components/emails/notify";
+import Replicate from "replicate";
 
 const WEBHOOK_URL = `${
   "https://witas.vercel.app" ??
@@ -31,9 +32,14 @@ export const stickersRouter = createTRPCRouter({
     )
     .output(defaultOutputSchema)
     .mutation(({ input, ctx }) => {
+      const replicate = new Replicate({
+        // get your token from https://replicate.com/account
+        auth: env.REPLICATE_API_TOKEN,
+      });
+
       const modelUpscale =
         "nightmareai/real-esrgan:42fed1c4974146d4d2414e2be2c5277c7fcf05fcc3a73abf41610695738c1d7b";
-      void ctx.replicate.run(modelUpscale, {
+      void replicate.run(modelUpscale, {
         input: {
           ...input,
           scale: 8,
@@ -74,13 +80,19 @@ export const stickersRouter = createTRPCRouter({
       if (type === "upscale") {
         const modelRemBg =
           "ilkerc/rembg:e809cddc666ccfd38a044f795cf65baab62eedc4273d096bf05935b9a3059b59";
-        void ctx.replicate.run(modelRemBg, {
+        const replicate = new Replicate({
+          // get your token from https://replicate.com/account
+          auth: env.REPLICATE_API_TOKEN,
+        });
+
+        const data = await replicate.run(modelRemBg, {
           input: {
             image: input.output,
           },
           webhook: `${WEBHOOK_URL}?stickerId=${stickerId}&type=rembg`,
           webhook_events_filter: ["completed"],
         });
+        console.log("LOG WEBHOOK:", data);
       } else {
         if (!input.output)
           return {
