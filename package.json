@@ -37,6 +37,7 @@
     "clsx": "^2.0.0",
     "dat.gui": "^0.7.9",
     "framer-motion": "^10.15.1",
+    "framer-motion-3d": "^10.15.1",
     "midjourney": "^2.7.77",
     "next": "^13.4.1",
     "openai-edge": "^1.2.2",
