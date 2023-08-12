@@ -1,4 +1,4 @@
-import { ParticlesCanvas } from "~/components/galaxy";
+// import { ParticlesCanvas } from "~/components/galaxy";
 import { supabase } from "~/server/supabase/supabaseClient";
 
 export default async function Page() {
@@ -6,7 +6,7 @@ export default async function Page() {
 
   return (
     <div>
-      <ParticlesCanvas
+      {/* <ParticlesCanvas
         particles={
           colors && colors?.length > 0
             ? colors.map((color) => ({
@@ -22,7 +22,7 @@ export default async function Page() {
                 })),
               ]
         }
-      />
+      /> */}
     </div>
   );
 }

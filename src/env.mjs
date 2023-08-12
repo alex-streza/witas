@@ -13,7 +13,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     OPENAI_API_KEY: z.string().min(1),
     REPLICATE_API_TOKEN: z.string().min(1),
-    WS: z.string().min(1),
+    WS: z.string().min(1).optional(),
     RESEND_API_KEY: z.string().min(1),
     SERVER_ID: z.string().min(1).optional(),
     CHANNEL_ID: z.string().min(1).optional(),
