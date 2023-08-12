@@ -1,78 +1,90 @@
-# T3 stack + Supabase + App directory
+## Think/Imagine/Optimize
 
-This project is Edge ready (Vercel Edge runtime)
+WITAS isn't your run of the mill website, it's build for those who like a challenge, and love cute stickers.
 
-This is a starter project/boilerplate to start out with:
+https://witas.vercel.app
 
-- TRPC
-- App directory/router
-- Prisma
-- Supabase (Auth, Storage, Serverless Queries)
-- Tailwind
-- Edge Ready
+> **Note**
+>
+> This project is optimized for mobile devices, generation won't work on desktop devices yet.
 
-It allows us to call database in server components through supabase-js, for client component we are using trpc+prisma due to the superior DX
+<sup>Made for Supabase Launch Week 8 Hackathon.</sup>
 
-## Projects using this starter
+Built with
 
-- PortfolioQuiz [Website](https://www.portfolio-quiz.com/)
-- Friendly Macros [Repo](https://github.com/F-PTS/FriendlyMacros) [Website](https://friendly-macros.vercel.app/)
-- Twitter Clone [Repo](https://github.com/F-PTS/Blogg) [Website](https://blogg-f-pts.vercel.app/)
-- Instagram Clone [Repo](https://github.com/jakubczarnowski/instagram-clone) [Website](https://instagram-clone-eight-mu.vercel.app/)
+- [Supabase](https://supabase.com/)
+- [Upstash](https://upstash.com/)
+- [Vercel](https://vercel.com/)
+- [Resend](https://resend.com/)
+- [Next.JS](https://nextjs.org/)
+- [OpenAI](https://openai.com/)
+- [Midjourney](https://midjourney.com/)
+- [Replicate](https://replicate.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [framer-motion](https://www.framer.com/motion/)
 
-## What's next? How do I make an app with this?
+## How it works
 
-- Clone this project
-- Run
+> **Warning**
+>
+> AHOY mate! Spoilers ahead!
+>
+> Let me first present how it works followed by some of the its inner workings since the UI isn't the only thing that's exceptional.
 
-```
-npm install
-pnpm install
-yarn
-```
+As the name doesn't suggest, it's an acronym for Wait is that sticker, in a nutshell it generates stickers with Midjourney.
 
-- Copy the .env.example into .env and fill out the envs
-- If you develop on local supabase run:
+1. Enter your server id, channel id and authorization for Midjourney (optional)
+2. Enter subject (optional)
+3. Generate or enter prompt
+4. Wait for the generation to finish (marvel at some sweet stickers in the meanwhile)
+5. Pick your favorite sticker (or all 4) download them raw or get the optimized versions in email 10 minutes later
 
-```
-yarn prepare:local
-npm run prepare:local
-pnpm prepare:local
-```
+It uses both OpenAI GPT3.5 to generate a prompt for a given subject and calls Midjourney to generate the stickers, it uses a stream connection which allows instant updates whenever progress is made.
 
-- If you develop on cloud supabase run:
+Once the image is generated it is inserted in Supabase and uploaded to Storage, then gets split in 4 using canvas methods where you can individually download and optimize each.
 
-```
-yarn prepare:remote
-npm run prepare:remote
-pnpm prepare:remote
-```
+If you want to optimize an image it will trigger first a Replicate upscale prediction with a webhook pointing back to the API. In the endpoint I check the query metadata type to decide whether it should proceed to remove the background or mark the job as fully completed by uploading the result to Supabase storage.
 
-- Run the project
+One can explore images and go to each individually where I'm using an algorithm to extract dominant colors from the sticker and save them in Supabase. The plan was to create an 8 galaxy from each 8 dominant colors of each sticker but I kinda ran out of time.
 
-```
-yarn dev
-npm run dev
-pnpm dev
-```
+Every 10 minutes there's a cron job setup in Upstash that hits an endpoint which checks all completed jobs that were not notified yet and sends batch emails using Resend to users containing the optimized stickers.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs.
+The entered server id, channel id and authorization are only stored locally in local storage, they are used directly in the API call to Midjourney/Discord.
 
-- [Next.js app router](https://nextjs.org/docs)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-- [Supabase](https://supabase.com/docs)
+There are a lot of image manipulation all throughot the app, you can find useful functions to convert images from base64 to blob and vice versa, or download from url and upload to Supa Storage, compress images, split images, etc.
 
-## Learn More
+List of Supabase features used:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- Database
+  - storing stickers, users, colors and replicate_jobs info
+- Storage
+  - storing raw stickers and optimized stickers
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## Motivation
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+About a month ago my GF and project sidekick had the idea to use Midjourney to generate stickers, she automated the cropping and upscaling parts using Python locally (no Replicate there) and then manually uploaded to Redbubble. That's when I first theorized building something like that but I didn't do anything about it.
 
-## How do I deploy this?
+Then came Supabase Launch Week 8 Hackathon and I thought it would be a great opportunity to build something free & open-source with Supabase and Midjourney, since very few have done before.
 
-Follow deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+I wanted to do something hotdog related again (obviously), and initially this started as kind of a joke. Like something just for laughs.
+However once I started tinkering, I started having a lot of creative ideas which made this project turn into an art project (or sort of).
+
+I'm a fan of Neon Genesis Evangelion, so design has gotten some inspiration from it.
+
+## Ideas for the future
+
+- Generate flow for desktop
+- Allow sticker template customization before export
+- Use different high quality models to enable free usage
+- Restructure/refactor code
+- Use more Supabase because it's cool
+
+## The team / contributors
+
+- alex-streza ([GitHub](https://github.com/alex-streza), [Twitter](https://twitter.com/alex_streza))
+
+## Thanks to
+
+- [cata](https://twitter.com/Catalina_Melnic) for giving constant feedback, configuring Resend and working on color extraction and the galaxy scene
+- [erictik](https://github.com/erictik) for creating the foundation for communicating with [Midjourney](https://github.com/erictik/midjourney-ui) in Next.JS
