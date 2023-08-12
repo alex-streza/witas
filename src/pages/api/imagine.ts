@@ -1,4 +1,5 @@
 import { Midjourney } from "midjourney";
+import { env } from "~/env.mjs";
 
 type ResponseError = {
   message: string;
@@ -18,12 +19,12 @@ const handler = async (req: Request) => {
 
   console.log("imagine.handler", prompt, serverId, channelId, authorization);
   const client = new Midjourney({
-    ServerId: serverId ?? process.env.SERVER_ID,
-    ChannelId: channelId ?? process.env.CHANNEL_ID,
-    SalaiToken: authorization ?? process.env.SALAI_TOKEN,
-    HuggingFaceToken: process.env.HUGGINGFACE_TOKEN,
-    Ws: process.env.WS === "true",
-    Debug: true,
+    ServerId: serverId ?? env.SERVER_ID,
+    ChannelId: channelId ?? env.CHANNEL_ID,
+    SalaiToken: authorization ?? env.SALAI_TOKEN,
+    HuggingFaceToken: env.HUGGINGFACE_TOKEN,
+    Ws: env.WS === "true",
+    Debug: process.env.NODE_ENV === "development",
   });
 
   await client.init();

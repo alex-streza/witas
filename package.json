@@ -5,17 +5,15 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
     "update-types-local": "supabase gen types typescript --local > src/server/supabase/supabaseTypes.ts",
-    "prepare:local": "yarn update-types-local && yarn prisma db pull && yarn prisma generate && yarn prisma-case-format --file prisma/schema.prisma  && yarn prisma generate",
+    "prepare:local": "pnpm update-types-local",
     "update-types-remote": "supabase gen types typescript --project-id \"eiuckazvagocqjiisium\" --schema public > src/server/supabaseTypes.ts",
-    "prepare:remote": "yarn update-types-remote && yarn prisma db pull && yarn prisma generate && yarn prisma-case-format --file prisma/schema.prisma  && yarn prisma generate"
+    "prepare:remote": "pnpm update-types-remote"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.0.10",
-    "@prisma/client": "^4.11.0",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tooltip": "^1.0.6",
@@ -39,7 +37,7 @@
     "framer-motion": "^10.15.1",
     "framer-motion-3d": "^10.15.1",
     "midjourney": "^2.7.77",
-    "next": "^13.4.1",
+    "next": "^13.4.4",
     "openai-edge": "^1.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -66,12 +64,10 @@
     "autoprefixer": "^10.4.14",
     "encoding": "^0.1.13",
     "eslint": "^8.36.0",
-    "eslint-config-next": "^13.4.1",
+    "eslint-config-next": "^13.4.4",
     "postcss": "^8.4.21",
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.6",
-    "prisma": "^4.11.0",
-    "prisma-case-format": "^1.4.1",
     "supabase": "^1.82.6",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.0.2"
