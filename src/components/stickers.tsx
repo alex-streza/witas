@@ -81,7 +81,7 @@ export const ClickStickers = () => {
             url: getRandomNonDuplicateUrl(stickers.map((s) => s.url)) as string,
             rotate: Math.random() * 30 * (Math.random() > 0.5 ? -1 : 1),
             zIndex: prev[prev.length - 1].zIndex + 1,
-            scale: Math.random() * 0.5 + 0.5,
+            scale: Math.random() * 0.3 + 0.9,
           },
         ]);
       else
@@ -93,7 +93,7 @@ export const ClickStickers = () => {
             url: getRandomNonDuplicateUrl(stickers.map((s) => s.url)) as string,
             rotate: Math.random() * 30 * (Math.random() > 0.5 ? -1 : 1),
             zIndex: (prev[prev.length - 1]?.zIndex || 0) + 1 || 1,
-            scale: Math.random() * 0.5 + 0.5,
+            scale: Math.random() * 0.3 + 0.9,
           },
         ]);
     };

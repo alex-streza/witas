@@ -149,7 +149,7 @@ const Result = ({
         ></motion.span>
         Generating #xxx
       </motion.h1>
-      <div className="pointer-events-none absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 md:right-0 md:translate-x-0">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 px-5 md:right-0 md:translate-x-0">
         <motion.div className="img-container relative mb-3 aspect-square w-full overflow-hidden border border-zinc-200">
           <motion.img
             className="generated-image absolute inset-0 aspect-square w-full opacity-0"
@@ -268,6 +268,7 @@ export const Generate = ({ images }: { images: string[] }) => {
   const isPhone = useMediaQuery("(max-width: 640px)");
 
   const [step, setStep] = useState<Step>("TOKENS");
+  // const [step, setStep] = useState<Step>("LOADING");
   const { value: email, set: setEmail } = useLocalStorageValue<string>(
     "email",
     {
