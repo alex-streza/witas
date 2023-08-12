@@ -11,7 +11,7 @@ import { env } from "~/env.mjs";
 import { NotifyEmail } from "~/components/emails/notify";
 
 const WEBHOOK_URL = `${
-  process.env.VERCEL_URL ??
+  "https://witas.vercel.app" ??
   "https://1855-2a02-2f04-e506-2900-6651-c6e0-ed4b-14d4.ngrok.io"
 }/api/webhooks/replicate`;
 
