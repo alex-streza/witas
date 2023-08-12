@@ -85,6 +85,7 @@ I'm a fan of Neon Genesis Evangelion, so design has gotten some inspiration from
 ## The team / contributors
 
 - alex-streza ([GitHub](https://github.com/alex-streza), [Twitter](https://twitter.com/alex_streza))
+- catalina ([GitHub](https://github.com/welnic), [Twitter](https://twitter.com/Catalina_Melnic)
 
 ## Thanks to
 
