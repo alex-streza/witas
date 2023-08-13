@@ -27,6 +27,7 @@
     "@trpc/next": "^10.18.0",
     "@trpc/react-query": "^10.18.0",
     "@trpc/server": "^10.18.0",
+    "@vercel/analytics": "^1.0.2",
     "acronym": "^1.0.0",
     "ai": "^2.1.32",
     "base64-arraybuffer": "^1.0.2",

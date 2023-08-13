@@ -1,4 +1,5 @@
 import { Navigation } from "~/components/navigation";
+import { Analytics } from "@vercel/analytics/react";
 import "~/styles/globals.css";
 
 export const metadata = {
@@ -43,6 +44,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
       <body className="relative h-screen w-screen overflow-y-auto overflow-x-hidden bg-zinc-900 p-5 scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-500 md:px-20 md:py-10">
         <Navigation />
         {children}
+        <Analytics />
       </body>
     </html>
   );
