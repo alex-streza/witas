@@ -18,6 +18,7 @@ export const env = createEnv({
     SERVER_ID: z.string().min(1).optional(),
     CHANNEL_ID: z.string().min(1).optional(),
     SALAI_TOKEN: z.string().min(1).optional(),
+    NEXT_PUBLIC_MIXPANEL_TOKEN: z.string().min(1).optional(),
     HUGGINGFACE_TOKEN: z.string().min(1).optional(),
   },
 
@@ -51,7 +52,9 @@ export const env = createEnv({
     SERVER_ID: process.env.SERVER_ID,
     CHANNEL_ID: process.env.CHANNEL_ID,
     SALAI_TOKEN: process.env.SALAI_TOKEN,
+    NEXT_PUBLIC_MIXPANEL_TOKEN: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
     HUGGINGFACE_TOKEN: process.env.HUGGINGFACE_TOKEN,
+
     WS: process.env.WS,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

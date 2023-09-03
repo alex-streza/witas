@@ -6,6 +6,7 @@ import {
   defaultOutputSchema,
   replicateWebhookInputSchema,
 } from "~/utils/schema";
+import mixpanel from "mixpanel-browser";
 import { Resend } from "resend";
 import { env } from "~/env.mjs";
 import { NotifyEmail } from "~/components/emails/notify";

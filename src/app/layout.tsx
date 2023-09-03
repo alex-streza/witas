@@ -1,6 +1,9 @@
 import { Navigation } from "~/components/navigation";
 import { Analytics } from "@vercel/analytics/react";
 import "~/styles/globals.css";
+import { useEffect } from "react";
+import mixpanel from "mixpanel-browser";
+import { env } from "~/env.mjs";
 
 export const metadata = {
   description:
@@ -29,6 +32,10 @@ export const metadata = {
 };
 
 function RootLayout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    mixpanel.init(env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
+  }, []);
+
   return (
     <html lang="en">
       <head>
