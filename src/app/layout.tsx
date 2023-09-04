@@ -33,7 +33,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <script src="https://cdn.jsdelivr.net/npm/mixpanel-browser/lib/mixpanel.min.js"></script>
+        <script src="https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
