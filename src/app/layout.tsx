@@ -1,8 +1,6 @@
 import { Navigation } from "~/components/navigation";
 import { Analytics } from "@vercel/analytics/react";
 import "~/styles/globals.css";
-import { useEffect } from "react";
-import mixpanel from "mixpanel-browser";
 import { env } from "~/env.mjs";
 
 export const metadata = {
@@ -32,13 +30,20 @@ export const metadata = {
 };
 
 function RootLayout({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    mixpanel.init(env.NEXT_PUBLIC_MIXPANEL_TOKEN, { track_pageview: true });
-  }, []);
-
   return (
     <html lang="en">
       <head>
+        <script src="https://cdn.jsdelivr.net/npm/mixpanel-browser/lib/mixpanel.min.js"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              mixpanel.init(${env.NEXT_PUBLIC_MIXPANEL_TOKEN}, { track_pageview: true, persistence: 'localStorage' });
+              mixpanel.track('Page View', {
+                'Page Type': 'Home Page'
+              });
+            `,
+          }}
+        />
         <link
           rel="stylesheet"
           href="https://use.typekit.net/yjv8oem.css"
