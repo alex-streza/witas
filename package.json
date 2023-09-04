@@ -39,6 +39,7 @@
     "framer-motion": "^10.15.1",
     "framer-motion-3d": "^10.15.1",
     "midjourney": "^2.7.77",
+    "mixpanel-browser": "^2.47.0",
     "next": "^13.4.4",
     "openai-edge": "^1.2.2",
     "react": "18.2.0",

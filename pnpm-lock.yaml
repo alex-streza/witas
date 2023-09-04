@@ -83,6 +83,9 @@ dependencies:
   midjourney:
     specifier: ^2.7.77
     version: 2.7.77
+  mixpanel-browser:
+    specifier: ^2.47.0
+    version: 2.47.0
   next:
     specifier: ^13.4.4
     version: 13.4.4(react-dom@18.2.0)(react@18.2.0)
@@ -3772,6 +3775,10 @@ packages:
       minipass: 3.3.6
       yallist: 4.0.0
     dev: true
+
+  /mixpanel-browser@2.47.0:
+    resolution: {integrity: sha512-Ldrva0fRBEIFWmEibBQO1PulfpJVF3pf28Guk09lDirDaSQqqU/xs9zQLwN2rL5VwVtsP1aD3JaCgaa98EjojQ==}
+    dev: false
 
   /mkdirp@1.0.4:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
