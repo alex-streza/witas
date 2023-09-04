@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import Link from "next/link";
 import { ShuffleText } from "~/components/animation/shuffle";
@@ -8,11 +8,11 @@ import { useEffect } from "react";
 import mixpanel from "mixpanel-browser";
 
 export default function Page() {
-  useEffect(() => {
-    mixpanel.track("Page View", {
-      "Page Type": "Home Page",
-    });
-  }, []);
+  // useEffect(() => {
+  //   mixpanel.track("Page View", {
+  //     "Page Type": "Home Page",
+  //   });
+  // }, []);
 
   return (
     <>

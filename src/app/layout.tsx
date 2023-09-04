@@ -35,9 +35,10 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <Script>
+        {/* <Script>
           {`mixpanel.init("${env.NEXT_PUBLIC_MIXPANEL_TOKEN}", { track_pageview: true, persistence: 'localStorage' });`}
-        </Script>
+        </Script> */}
+
         <link
           rel="stylesheet"
           href="https://use.typekit.net/yjv8oem.css"
