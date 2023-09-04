@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import "~/styles/globals.css";
 import { env } from "~/env.mjs";
 import mixpanel from "mixpanel-browser";
+import Script from "next/script";
 
 export const metadata = {
   description:
@@ -34,9 +35,9 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <script>
+        <Script>
           {`mixpanel.init("${env.NEXT_PUBLIC_MIXPANEL_TOKEN}", { track_pageview: true, persistence: 'localStorage' });`}
-        </script>
+        </Script>
         <link
           rel="stylesheet"
           href="https://use.typekit.net/yjv8oem.css"
