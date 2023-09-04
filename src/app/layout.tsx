@@ -2,6 +2,7 @@ import { Navigation } from "~/components/navigation";
 import { Analytics } from "@vercel/analytics/react";
 import "~/styles/globals.css";
 import { env } from "~/env.mjs";
+import mixpanel from "mixpanel-browser";
 
 export const metadata = {
   description:
@@ -33,17 +34,9 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <script src="https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              mixpanel.init(${env.NEXT_PUBLIC_MIXPANEL_TOKEN}, { track_pageview: true, persistence: 'localStorage' });
-              mixpanel.track('Page View', {
-                'Page Type': 'Home Page'
-              });
-            `,
-          }}
-        />
+        <script>
+          {`mixpanel.init("${env.NEXT_PUBLIC_MIXPANEL_TOKEN}", { track_pageview: true, persistence: 'localStorage' });`}
+        </script>
         <link
           rel="stylesheet"
           href="https://use.typekit.net/yjv8oem.css"
