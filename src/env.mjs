@@ -18,7 +18,7 @@ export const env = createEnv({
     SERVER_ID: z.string().min(1).optional(),
     CHANNEL_ID: z.string().min(1).optional(),
     SALAI_TOKEN: z.string().min(1).optional(),
-    NEXT_PUBLIC_MIXPANEL_TOKEN: z.string().min(1).optional(),
+    NEXT_PUBLIC_MIXPANEL_TOKEN: z.string().min(1),
     HUGGINGFACE_TOKEN: z.string().min(1).optional(),
   },
 

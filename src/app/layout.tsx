@@ -1,9 +1,9 @@
-import { Navigation } from "~/components/navigation";
 import { Analytics } from "@vercel/analytics/react";
-import "~/styles/globals.css";
-import { env } from "~/env.mjs";
 import mixpanel from "mixpanel-browser";
 import Script from "next/script";
+import { Navigation } from "~/components/navigation";
+import { env } from "~/env.mjs";
+import "~/styles/globals.css";
 
 export const metadata = {
   description:
@@ -35,10 +35,11 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        {/* <Script>
-          {`mixpanel.init("${env.NEXT_PUBLIC_MIXPANEL_TOKEN}", { track_pageview: true, persistence: 'localStorage' });`}
-        </Script> */}
-
+        <Script id="mixpanel">
+          {`
+            mixpanel.init(${env.NEXT_PUBLIC_MIXPANEL_TOKEN}, { debug: true, track_pageview: true, persistence: 'localStorage' });
+          `}
+        </Script>
         <link
           rel="stylesheet"
           href="https://use.typekit.net/yjv8oem.css"

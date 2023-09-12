@@ -1,18 +1,18 @@
-// "use client";
+"use client";
 
+import mixpanel from "mixpanel-browser";
 import Link from "next/link";
+import { useEffect } from "react";
 import { ShuffleText } from "~/components/animation/shuffle";
 import { CircleButton } from "~/components/circle-button";
 import { ClickStickers, StickerScene } from "~/components/stickers";
-import { useEffect } from "react";
-import mixpanel from "mixpanel-browser";
 
 export default function Page() {
-  // useEffect(() => {
-  //   mixpanel.track("Page View", {
-  //     "Page Type": "Home Page",
-  //   });
-  // }, []);
+  useEffect(() => {
+    mixpanel.track("Page View", {
+      "Page Type": "Home Page",
+    });
+  }, []);
 
   return (
     <>
@@ -29,13 +29,6 @@ export default function Page() {
           />
         </div>
       </div>
-      {/* <Image
-        src="/images/temp.png"
-        alt="Picture of the author"
-        className="absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2"
-        width={978.6}
-        height={631.29}
-      /> */}
       <Link
         href="/generate"
         className="absolute bottom-4 left-1/2 -translate-x-1/2 -rotate-12 md:hidden"
