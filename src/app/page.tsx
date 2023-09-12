@@ -1,19 +1,11 @@
 "use client";
 
-import mixpanel from "mixpanel-browser";
 import Link from "next/link";
-import { useEffect } from "react";
 import { ShuffleText } from "~/components/animation/shuffle";
 import { CircleButton } from "~/components/circle-button";
 import { ClickStickers, StickerScene } from "~/components/stickers";
 
 export default function Page() {
-  useEffect(() => {
-    mixpanel.track("Page View", {
-      "Page Type": "Home Page",
-    });
-  }, []);
-
   return (
     <>
       <ClickStickers />
